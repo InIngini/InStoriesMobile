@@ -5,45 +5,45 @@
     <ContentPage.Content>
         <Grid BackgroundColor="#161519">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="58" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             
-
-            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" WidthRequest="400" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
+            <!--0-->
+            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" VerticalOptions="End" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
                 <!-- Полоска меню -->
                 <!-- Кнопки справа -->
-                <Grid x:Name="Bar" HorizontalOptions="End">
+                <Grid x:Name="Bar" HorizontalOptions="FillAndExpand">
+                    
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="62" />
+                        <ColumnDefinition Width="200" />
                         <ColumnDefinition Width="70" />
-                        <ColumnDefinition Width="150" />
-                        <ColumnDefinition Width="120" />
-                        <ColumnDefinition Width="15" />
+                        <ColumnDefinition Width="40" />
                     </Grid.ColumnDefinitions>
 
-                    <!--<Image Source="avatar.png" BackgroundColor="Transparent" Margin="13,8"
+                    <!--<Image Source="avatar.png" BackgroundColor="Transparent"
                HeightRequest="40" WidthRequest="40" Grid.Column="0" HorizontalOptions="End"/>-->
 
-                    <ImageButton Source="kolokolchik.png" BackgroundColor="Transparent" Margin="0,5,13,0"
+                    <ImageButton Source="kolokolchik.png" BackgroundColor="Transparent"
                       Grid.Column="2" HorizontalOptions="End"/>
 
-                    <ImageButton Source="ttt.png" BackgroundColor="Transparent" Margin="0,5,0,0"
-                      Grid.Column="3" HorizontalOptions="End"/>
+                    <ImageButton Source="ttt.png" BackgroundColor="Transparent"
+                      Grid.Column="3" HorizontalOptions="Center"/>
                 </Grid>
             </StackLayout>
-
+            
+            <!--1-->
             <ScrollView Margin="0,36,0,0" Grid.Row="1">
                 <!-- Основное содержимое с возможностью прокрутки -->
                 <Grid x:Name="buttonsGrid">
                     <!-- Это место оставьте пустым для размещения кнопок -->
                 </Grid>
             </ScrollView>
-
-            <StackLayout Grid.Row="1" Margin="30,0"  HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
-                <Button  HorizontalOptions="Start" VerticalOptions="Start" CornerRadius="32" BackgroundColor="#B280FE" 
-                        WidthRequest="64" HeightRequest="64" />
-                <Label Text="+" TextColor="White" FontSize="75" FontAttributes="Bold"
-                        HorizontalOptions="Start" VerticalOptions="Center" FontFamily ="Jaldi" Margin="-56,-39,0,0"/>
+                    
+            <StackLayout Grid.Row="1" Margin="20" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
+                <ImageButton Source="plus.png" BackgroundColor="Transparent"
+                        HeightRequest="70" WidthRequest="70" HorizontalOptions="End" VerticalOptions="End" Clicked="ImageButton_Clicked"/>
             </StackLayout>
         </Grid>
     </ContentPage.Content>

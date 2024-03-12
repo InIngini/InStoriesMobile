@@ -6,14 +6,14 @@
         <Grid BackgroundColor="#161519">
             <Grid.RowDefinitions>
                 <RowDefinition Height="58" />
-                <RowDefinition Height="670" />
-                <RowDefinition Height="*" />
+                <RowDefinition Height="672*" />
+                <RowDefinition Height="58" />
             </Grid.RowDefinitions>
 
-
-            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" WidthRequest="400" Grid.Row="0" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
+            <!--0-->
+            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" WidthRequest="400" Grid.Row="0" VerticalOptions="End" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
                 <!-- Полоска меню -->
-                <Grid x:Name="Bar" HorizontalOptions="End">
+                <Grid x:Name="Bar" HorizontalOptions="FillAndExpand">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50" />
                         <ColumnDefinition Width="170" />
@@ -22,13 +22,14 @@
 
                     <ImageButton Source="galochka.png" BackgroundColor="Transparent" Margin="13,8"
                         HeightRequest="30" WidthRequest="30" 
-                        Grid.Column="0" HorizontalOptions="End" Clicked="Button_Clicked"/>
+                        Grid.Column="0" HorizontalOptions="End" Clicked="Button1_Clicked"/>
                     
                     <ImageButton Source="ttt.png" BackgroundColor="Transparent" Margin="0,5,0,0"
                         Grid.Column="2" HorizontalOptions="End"/>
                 </Grid>
             </StackLayout>
 
+            <!--1-->
             <StackLayout Margin="0,36,0,0" Grid.Row="1">
                 <!-- Основное содержимое с возможностью прокрутки -->
                 <Grid x:Name="buttonsGrid">
@@ -43,13 +44,16 @@
 
                 <StackLayout Grid.Row="0" Padding="12,0" Spacing="20" Margin="11,-125">
                     <Button Text="Персонажи" BackgroundColor="#B280FE" TextColor="White" FontSize="25"
-                        FontFamily="Istok Web" FontAttributes="Bold" CornerRadius = "10" HeightRequest="66" />
+                        FontFamily="Istok Web Bold" FontAttributes="Bold" CornerRadius = "10" HeightRequest="66" 
+                            Clicked="ButtonPersona_Clicked"/>
 
                     <Button Text="Связи" BackgroundColor="#B280FE" TextColor="White" FontSize="25"
-                        FontFamily="Istok Web" FontAttributes="Bold" CornerRadius = "10" HeightRequest="66" />
+                        FontFamily="Istok Web Bold" FontAttributes="Bold" CornerRadius = "10" HeightRequest="66" 
+                            Clicked="ButtonShema_Clicked"/>
 
                     <Button Text="Таймлайн" BackgroundColor="#B280FE" TextColor="White" FontSize="25"
-                        FontFamily="Istok Web" FontAttributes="Bold" CornerRadius = "10"  HeightRequest="66" />
+                        FontFamily="Istok Web Bold" FontAttributes="Bold" CornerRadius = "10"  HeightRequest="66" 
+                            Clicked="ButtonTime_Clicked"/>
                 </StackLayout>
 
                 
@@ -57,28 +61,29 @@
             
             <StackLayout Grid.Row="1" Margin="10,10,10,0"  HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
                 <ImageButton Source="ok.png" BackgroundColor="Transparent"
-                    HeightRequest="64" WidthRequest="64" HorizontalOptions="End" VerticalOptions="End"/>
+                    HeightRequest="64" WidthRequest="64" HorizontalOptions="End" VerticalOptions="End" Clicked="Button1_Clicked"/>
             </StackLayout>
 
-            <StackLayout BackgroundColor="#B280FE" Grid.Row="2" HeightRequest="58" WidthRequest="400" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
+            <!--2-->
+            <StackLayout BackgroundColor="#B280FE" Grid.Row="2" HeightRequest="58" WidthRequest="400" HorizontalOptions="FillAndExpand" VerticalOptions="End" Orientation="Horizontal">
                 <!-- Полоска меню внизу -->
-                <Grid x:Name="Foot" HorizontalOptions="End">
+                <Grid x:Name="Foot" HorizontalOptions="FillAndExpand">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="90" />
-                        <ColumnDefinition Width="80" />
-                        <ColumnDefinition Width="90" />
-                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="90*" />
+                        <ColumnDefinition Width="80*" />
+                        <ColumnDefinition Width="90*" />
+                        <ColumnDefinition Width="90*" />
                     </Grid.ColumnDefinitions>
 
 
                     <ImageButton Source="homePress.png" BackgroundColor="Transparent" Margin="0,5,13,0"
-                        Grid.Column="0" HorizontalOptions="End"/>
+Grid.Column="0" HorizontalOptions="Center" Clicked="ButtonHome_Clicked"/>
                     <ImageButton Source="persona.png" BackgroundColor="Transparent" Margin="0,5,0,0"
-                        Grid.Column="1" HorizontalOptions="End"/>
+Grid.Column="1" HorizontalOptions="Center" Clicked="ButtonPersona_Clicked"/>
                     <ImageButton Source="shema.png" BackgroundColor="Transparent" Margin="0,5,0,0"
-                        Grid.Column="2" HorizontalOptions="End"/>
+Grid.Column="2" HorizontalOptions="Center" Clicked="ButtonShema_Clicked"/>
                     <ImageButton Source="time.png" BackgroundColor="Transparent" Margin="0,5,0,0"
-                        Grid.Column="3" HorizontalOptions="End"/>
+Grid.Column="3" HorizontalOptions="Center" Clicked="ButtonTime_Clicked"/>
                 </Grid>
             </StackLayout>
 

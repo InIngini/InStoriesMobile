@@ -12,19 +12,24 @@ namespace Курсач
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Page1 : ContentPage
 	{
-		public Page1 ()
+        List<string> buttonList;
+
+        public Page1 ()
 		{
 			InitializeComponent ();
             NavigationPage.SetHasNavigationBar(this, false);
 
+
+            //1
             //аватар и ник
             var avatarImage = new ImageButton
             {
                 Source = "avatar.png",
                 BackgroundColor = Color.Transparent,
-                Margin = new Thickness(13, 8),
                 HeightRequest = 40,
-                WidthRequest = 40
+                WidthRequest = 40,
+                HorizontalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.CenterAndExpand
             };
 
             var nameLabel = new Label
@@ -33,7 +38,6 @@ namespace Курсач
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
-                Margin = new Thickness(-5, 2, 0, 2),
                 VerticalOptions = LayoutOptions.CenterAndExpand
             };
             if (nameLabel.Text.Length > 12)
@@ -44,8 +48,9 @@ namespace Курсач
             Bar.Children.Add(avatarImage,0,0);
             Bar.Children.Add(nameLabel,1,0);
 
+            //2
             //книжки
-            var buttonList = new List<string> { "Book's name", "Book's long name", "Book's very long name"}; // Ваш список строк для текста кнопок
+            buttonList = new List<string> { "Book's name", "Book's long name", "Book's very long name"}; // Ваш список строк для текста кнопок
 
             int rowCount = buttonList.Count / 2 + 1; // Определить количество строк
 
@@ -58,6 +63,7 @@ namespace Курсач
             {
                 var button = new Button
                 {
+                    AutomationId = buttonList[i],
                     Text = buttonList[i],
                     FontSize = 20,
                     FontFamily = "Istok Web",
@@ -89,12 +95,14 @@ namespace Курсач
                     HeightRequest = button.HeightRequest,
                     WidthRequest = button.WidthRequest,
                     CornerRadius = 4,
-                    Margin = new Thickness(0, 0, 0, 0),
                     TranslationY = -button.HeightRequest, // Сдвигаем прямоугольник вверх, чтобы кнопка перекрывала его
                     TranslationX = -10
                 };
 
-                var stackLayout = new StackLayout();
+                var stackLayout = new StackLayout
+                {
+                    HorizontalOptions = LayoutOptions.Center
+                };
                 stackLayout.Children.Add(button);
                 stackLayout.Children.Add(rectangle);
 
@@ -107,8 +115,15 @@ namespace Курсач
 
         private async void Button_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2());
+            Button button = (Button)sender;  // Получение объекта Button, который отправил событие
+            string buttonText = button.AutomationId;  // Получение текста кнопки
 
+            await Navigation.PushAsync(new Page2(buttonText));  // Передача текста кнопки в конструктор Page2
+        }
+
+        private async void ImageButton_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Page2("Новая книга"));  // Передача текста кнопки в конструктор Page2
         }
     }
 }

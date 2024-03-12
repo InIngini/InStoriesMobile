@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Курсач.Page4">
+    <ContentPage.Content>
+        <Grid BackgroundColor="#161519">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="58" />
+                <RowDefinition Height="670*" />
+                <RowDefinition Height="58" />
+            </Grid.RowDefinitions>
+
+            <!--0-->
+            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" WidthRequest="400" Grid.Row="0" HorizontalOptions="FillAndExpand" VerticalOptions="End" Orientation="Horizontal">
+                <!-- Полоска меню -->
+                <Grid x:Name="Bar" HorizontalOptions="End">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50" />
+                        <ColumnDefinition Width="170" />
+                        <ColumnDefinition Width="135" />
+                    </Grid.ColumnDefinitions>
+
+                    <ImageButton Source="galochka.png" BackgroundColor="Transparent" Margin="13,8"
+                 HeightRequest="30" WidthRequest="30" 
+                 Grid.Column="0" HorizontalOptions="End" Clicked="ButtonHome_Clicked"/>
+
+                    <ImageButton Source="ttt.png" BackgroundColor="Transparent" Margin="0,5,0,0"
+                 Grid.Column="2" HorizontalOptions="End"/>
+                </Grid>
+            </StackLayout>
+
+            <!--1-->
+            <StackLayout Margin="0,30,0,0" Grid.Row="1">
+                <!-- Основное содержимое с возможностью прокрутки -->
+                <Grid x:Name="buttonsGrid">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+
+                </Grid>
+
+            </StackLayout>
+
+            <StackLayout Grid.Row="1" Margin="10,10,10,0" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
+                <ImageButton Source="ok.png" BackgroundColor="Transparent"
+            HeightRequest="64" WidthRequest="64" HorizontalOptions="End" VerticalOptions="End" Clicked="Button4_1_Clicked"/>
+            </StackLayout>
+
+            <!--2-->
+            <StackLayout BackgroundColor="#B280FE" Grid.Row="2" HeightRequest="58" WidthRequest="400" HorizontalOptions="FillAndExpand" VerticalOptions="End" Orientation="Horizontal">
+                <!-- Полоска меню внизу -->
+                <Grid x:Name="Foot" HorizontalOptions="FillAndExpand">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90*" />
+                        <ColumnDefinition Width="80*" />
+                        <ColumnDefinition Width="90*" />
+                        <ColumnDefinition Width="90*" />
+                    </Grid.ColumnDefinitions>
+
+
+                    <ImageButton Source="home.png" BackgroundColor="Transparent" Margin="0,5,13,0"
+              Grid.Column="0" HorizontalOptions="Center" Clicked="ButtonHome_Clicked"/>
+                    <ImageButton Source="persona.png" BackgroundColor="Transparent" Margin="0,5,0,0"
+              Grid.Column="1" HorizontalOptions="Center" Clicked="ButtonPersona_Clicked"/>
+                    <ImageButton Source="shemaPress.png" BackgroundColor="Transparent" Margin="0,5,0,0"
+              Grid.Column="2" HorizontalOptions="Center" Clicked="ButtonShema_Clicked"/>
+                    <ImageButton Source="time.png" BackgroundColor="Transparent" Margin="0,5,0,0"
+              Grid.Column="3" HorizontalOptions="Center" Clicked="ButtonTime_Clicked"/>
+                </Grid>
+            </StackLayout>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

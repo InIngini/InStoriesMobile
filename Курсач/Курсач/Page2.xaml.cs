@@ -12,15 +12,18 @@ namespace Курсач
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Page2 : ContentPage
     {
-        public Page2()
+        string nameBook;
+        public Page2(string nameBook)
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
+            this.nameBook = nameBook;
+
             //название книги
             var nameLabel = new Label
             {
-                Text = "Book's name",
+                Text = nameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -41,16 +44,16 @@ namespace Курсач
                 Text = "Название",
                 FontSize = 20,
                 FontAttributes = FontAttributes.Bold,
-                FontFamily = "Istok Web",
+                FontFamily = "Istok Web Bold",
                 TextColor = Color.White,
                 Margin = new Thickness(2, 0, 0, 0)
             };
             Editor textEditor = new Editor
             {
-                WidthRequest = 200,
+                WidthRequest = 100,
                 HeightRequest = 100,
                 BackgroundColor = Color.Transparent,
-                Text = nameLabel.Text,
+                Text = nameBook,
                 FontSize = 20,
                 FontFamily = "Istok Web",
                 TextColor = Color.White
@@ -91,7 +94,7 @@ namespace Курсач
                 TranslationX = 10
 
             };
-            button.Clicked += Button_Clicked;
+            //button.Clicked += Button_Clicked;
 
             var stackLayout2 = new StackLayout();
             stackLayout2.Children.Add(rectangle);
@@ -102,10 +105,28 @@ namespace Курсач
             buttonsGrid.Children.Add(stackLayout, 1, 0);
 
         }
-        private async void Button_Clicked(object sender, EventArgs e)
+        private async void Button1_Clicked(object sender, EventArgs e)
         {
+            //тут надо написать, что ничего не сохранится
             await Navigation.PushAsync(new Page1());
 
+        }
+
+        private async void ButtonHome_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Page2(nameBook));
+        }
+        private async void ButtonPersona_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Page3(nameBook));
+        }
+        private async void ButtonShema_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Page4(nameBook));
+        }
+        private async void ButtonTime_Clicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Page5(nameBook));
         }
     }
 }
