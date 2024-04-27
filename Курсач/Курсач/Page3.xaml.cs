@@ -40,15 +40,16 @@ namespace Курсач
             List<string> buttonTexts = new List<string> { "Текст 1", "Текст 2", "Текст 3", "Имя персонажа","Имя персонажа длиииинное"};
             foreach (string text in buttonTexts)
             {
-                Image button = new Image
+                Image avatarImage = new Image
                 {
                     BackgroundColor = Color.Transparent,
-                    Margin = new Thickness(12, 0, 0, 0),
+                    HorizontalOptions = LayoutOptions.Center,
+                    VerticalOptions = LayoutOptions.Center,
                     Aspect = Aspect.AspectFit,
                     Source = "avatar.png"
                 };
 
-                Label label = new Label
+                Label namePersonLabel = new Label
                 {
                     Text = text,
                     TextColor = Color.White,
@@ -56,41 +57,44 @@ namespace Курсач
                     HorizontalTextAlignment = TextAlignment.Center,
                     FontFamily = "Istok Web Bold", 
                     FontAttributes = FontAttributes.Bold,
-                    Margin = new Thickness(15, 3, 0, 0),
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.Center,
                 };
                 if(text.Length > 12)
                 {
-                    label.Text = label.Text.Substring(0, 12) + "...";
+                    namePersonLabel.Text = namePersonLabel.Text.Substring(0, 12) + "...";
                 }
                 Image checkmark = new Image
                 {
                     Source = "galochka.png",
                     Rotation = 180,
-                    Margin = new Thickness(0, 0, 20, 0),
-                    HorizontalOptions = LayoutOptions.EndAndExpand
+                    HorizontalOptions = LayoutOptions.EndAndExpand,
+                    VerticalOptions = LayoutOptions.Center,
                 };
-
+                Grid buttonContent = new Grid
+                {
+                    ColumnDefinitions =
+                    {
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(3, GridUnitType.Star) },
+                        new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) }
+                    }
+                };
+                buttonContent.Children.Add(avatarImage, 0, 0); // Первая колонка, первая строка
+                buttonContent.Children.Add(namePersonLabel, 1, 0); // Вторая колонка, первая строка
+                buttonContent.Children.Add(checkmark, 2, 0); // Третья колонка, первая строка
+                
                 Button stackedButton = new Button
                 {
                     Padding = new Thickness(0),
-                    Margin = new Thickness(0, 0,0,0),
                     BackgroundColor = Color.FromHex("#B280FE"),
                     CornerRadius = 12,
                     HeightRequest = 66,
                     
                 };
-                StackLayout buttonContent = new StackLayout
-                {
-                    Margin = new Thickness(18,-60,0,0),
-                    Orientation = StackOrientation.Horizontal,
-                    Spacing = 5,
-                    Children = { button, label, checkmark },
-                    
-                };
                 Button stackedButton2 = new Button
                 {
                     Padding = new Thickness(0),
-                    Margin = new Thickness(0, -60, 0, 0),
                     BackgroundColor = Color.Transparent,
                     CornerRadius = 12,
                     HeightRequest = 66,
@@ -99,15 +103,11 @@ namespace Курсач
                 };
                 stackedButton2.Clicked += Button3_1_Clicked;
 
-                StackLayout mainStackLayout = new StackLayout
-                {
-                    Margin = new Thickness(12,0),
-                    AutomationId = text,
-                    Children = {  stackedButton, buttonContent, stackedButton2 }
-                };
+                buttonsGrid.RowSpacing = 20;
+                buttonsGrid.Children.Add(stackedButton,0,i);
+                buttonsGrid.Children.Add(buttonContent,0,i);
+                buttonsGrid.Children.Add(stackedButton2,0,i);
 
-                buttonsGrid.RowSpacing = 30;
-                buttonsGrid.Children.Add(mainStackLayout,0,i);
                 i++;
             }
 
@@ -115,10 +115,18 @@ namespace Курсач
 
         private async void Button3_1_Clicked(object sender, EventArgs e)
         {
-            Button button = (Button)sender;  // Получение объекта Button, который отправил событие
-            string namePerson = button.AutomationId;  // Получение текста кнопки
+            if (sender is ImageButton imageButton)
+            {
+                await Navigation.PushAsync(new Page3_1(nameBook, "", "Личность"));
+            }
+            else
+            {
+                Button button = (Button)sender;  // Получение объекта Button, который отправил событие
+                string namePerson = button.AutomationId;  // Получение текста кнопки
 
-            await Navigation.PushAsync(new Page3_1(nameBook,namePerson,"Личность"));
+                await Navigation.PushAsync(new Page3_1(nameBook, namePerson, "Личность"));
+            }
+
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)

@@ -14,12 +14,14 @@ namespace Курсач
     {
         string nameBook;
         string namePerson;
+        string кнопка;
         public Page3_1(string nameBook, string namePerson, string кнопка)
         {
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
             this.nameBook = nameBook;
             this.namePerson = namePerson;
+            this.кнопка = кнопка;
             //название книги
             var nameLabel = new Label
             {
@@ -37,11 +39,20 @@ namespace Курсач
 
             Bar.Children.Add(nameLabel, 1, 0);
 
-            if(кнопка=="Личность")
+            if (кнопка == "Личность")
                 Button_Clicked(button1, EventArgs.Empty);//по умолчанию открыта личность
             else//Биография
+            {
+                
                 Button_Clicked(button5, EventArgs.Empty);
+            }
 
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            if (кнопка == "Биография")
+                ScrollToIndex(5);
         }
         List<string> textList1 = new List<string>
         {
@@ -73,6 +84,10 @@ namespace Курсач
             "Почему персонаж должен быть им интересен?"
         };
         bool АватарОбновить = true;
+        private async void ScrollToIndex(int index)
+        {
+            await characteristicScrollView.ScrollToAsync((index - 1) * 100, 0, true);
+        }
         private void Button_Clicked(object sender, EventArgs e)
         {
             if (АватарОбновить)
@@ -116,6 +131,8 @@ namespace Курсач
             button5.TextColor = Color.Black;
             button6.TextColor = Color.Black;
             clickedButton.TextColor = Color.White;
+            int indexButton = clickedButton.AutomationId[0]-'0';
+            ScrollToIndex(indexButton);
 
             buttonsGrid2.Children.Clear();
             ScrollView scrollView = new ScrollView();
@@ -426,18 +443,15 @@ namespace Курсач
                             label.Text = label.Text.Substring(0, 30) + "...";
                         }
 
-                        Button stackedButton = new Button
+                        BoxView stackedButton = new BoxView
                         {
-                            Padding = new Thickness(0),
-                            Margin = new Thickness(0, 0, 0, 0),
                             BackgroundColor = Color.FromHex("#B280FE"),
                             CornerRadius = 12,
                             HeightRequest = 45,
-
+                            
                         };
                         StackLayout buttonContent = new StackLayout
                         {
-                            Margin = new Thickness(18, -60, 0, 0),
                             Orientation = StackOrientation.Horizontal,
                             Spacing = 5,
                             Children = { label },
@@ -461,7 +475,6 @@ namespace Курсач
                         Button stackedButton2 = new Button
                         {
                             Padding = new Thickness(0),
-                            Margin = new Thickness(0, -60, 0, 0),
                             BackgroundColor = Color.Transparent,
                             CornerRadius = 12,
                             HeightRequest = 45,
@@ -470,15 +483,10 @@ namespace Курсач
                         };
                         stackedButton2.Clicked += Button3_2_Clicked;
 
-                        StackLayout mainStackLayout = new StackLayout
-                        {
-                            Margin = new Thickness(12,12,12,6),
-                            AutomationId = text,
-                            Children = { stackedButton, buttonContent, stackedButton2 }
-                        };
-
-                        //buttonsGrid2.RowSpacing = 30;
-                        gridBio.Children.Add(mainStackLayout, 0, i);
+                        gridBio.RowSpacing = 10;
+                        gridBio.Children.Add(stackedButton, 0, i);
+                        gridBio.Children.Add(buttonContent, 0, i);
+                        gridBio.Children.Add(stackedButton2, 0, i);
                         i++;
                     }
                     scrollView.Content = gridBio;

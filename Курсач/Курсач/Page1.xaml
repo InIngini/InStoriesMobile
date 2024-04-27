@@ -10,29 +10,26 @@
             </Grid.RowDefinitions>
             
             <!--0-->
-            <StackLayout BackgroundColor="#B280FE" HeightRequest="58" VerticalOptions="End" Orientation="Horizontal" HorizontalOptions="FillAndExpand">
-                <!-- Полоска меню -->
-                <!-- Кнопки справа -->
-                <Grid x:Name="Bar" HorizontalOptions="FillAndExpand">
-                    
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="62" />
-                        <ColumnDefinition Width="200" />
-                        <ColumnDefinition Width="70" />
-                        <ColumnDefinition Width="40" />
-                    </Grid.ColumnDefinitions>
+             <!-- Полоска меню -->
+            <Grid x:Name="Bar" BackgroundColor="#B280FE" HeightRequest="58" VerticalOptions="Center">
 
-                    <!--<Image Source="avatar.png" BackgroundColor="Transparent"
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="1*" />
+                </Grid.ColumnDefinitions>
+
+                <!--<Image Source="avatar.png" BackgroundColor="Transparent"
                HeightRequest="40" WidthRequest="40" Grid.Column="0" HorizontalOptions="End"/>-->
 
-                    <ImageButton Source="kolokolchik.png" BackgroundColor="Transparent"
+                <ImageButton Source="kolokolchik.png" BackgroundColor="Transparent"
                       Grid.Column="2" HorizontalOptions="End"/>
 
-                    <ImageButton Source="ttt.png" BackgroundColor="Transparent"
+                <ImageButton Source="ttt.png" BackgroundColor="Transparent"
                       Grid.Column="3" HorizontalOptions="Center"/>
-                </Grid>
-            </StackLayout>
-            
+            </Grid>
+
             <!--1-->
             <ScrollView Margin="0,36,0,0" Grid.Row="1">
                 <!-- Основное содержимое с возможностью прокрутки -->
@@ -40,11 +37,10 @@
                     <!-- Это место оставьте пустым для размещения кнопок -->
                 </Grid>
             </ScrollView>
-                    
-            <StackLayout Grid.Row="1" Margin="20" HorizontalOptions="End" VerticalOptions="End" Orientation="Horizontal">
-                <ImageButton Source="plus.png" BackgroundColor="Transparent"
-                        HeightRequest="70" WidthRequest="70" HorizontalOptions="End" VerticalOptions="End" Clicked="ImageButton_Clicked"/>
-            </StackLayout>
+               
+            <ImageButton Grid.Row="1" Margin="20" Source="plus.png" BackgroundColor="Transparent"
+                    HeightRequest="70" WidthRequest="70" HorizontalOptions="End" VerticalOptions="End" Clicked="ImageButton_Clicked"/>
+            
         </Grid>
     </ContentPage.Content>
    
