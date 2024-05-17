@@ -37,7 +37,8 @@
                     <RowDefinition Height="1*" />
                 </Grid.RowDefinitions>
 
-                <ScrollView x:Name="scrollView" Grid.Row="1">
+                <ScrollView x:Name="scrollView" Grid.Row="1" Orientation="Both">
+                    
                     
                 </ScrollView>
 
