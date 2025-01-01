@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Курсач.Services;
 
 namespace Курсач
 {
@@ -10,8 +12,25 @@ namespace Курсач
 		{
 			InitializeComponent();
 
-			MainPage = new NavigationPage(new MainPage());
+            OnConfiguration();
+
+            MainPage = new NavigationPage(new MainPage());
 		}
+
+		public void OnConfiguration()
+		{
+            var services = new ServiceCollection();
+
+            services.AddHttpClient<UserService>(client =>{client.BaseAddress = new Uri("http://localhost:5153/");});
+            services.AddHttpClient<TimelineService>(client => {client.BaseAddress = new Uri("http://localhost:5153/");});
+            services.AddHttpClient<SchemeService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<PictureService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<GalleryService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<EventService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<ConnectionService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<CharacterService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+            services.AddHttpClient<BookService>(client => { client.BaseAddress = new Uri("http://localhost:5153/"); });
+        }
 
 		protected override void OnStart()
 		{
