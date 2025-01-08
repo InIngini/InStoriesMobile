@@ -4,12 +4,13 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Курсач.Core.Interfaces;
 using Курсач.Data.DTO;
 using Курсач.Data.Entities;
 
 namespace Курсач.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly HttpClient _httpClient;
 
