@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using Курсач.Common;
 using Курсач.Core.Interfaces;
 using Курсач.Data.CommonModels;
 using Курсач.Data.DTO;
@@ -15,7 +16,6 @@ namespace Курсач.Services
     {
         private readonly HttpClient HttpClient;
         private string Token;
-
         public UserService(HttpClient httpClient)
         {
             HttpClient = httpClient;
@@ -45,20 +45,19 @@ namespace Курсач.Services
             }
 
             var loginResponse = await response.Content.ReadFromJsonAsync<LoginResponse>();
-            Token = loginResponse.UserToken.Token; // Сохранение токена
-            return Token;
+            UserData.UserTokenData = loginResponse.UserToken;
+            return loginResponse.UserToken.Token;
         }
 
         public async Task<User> GetUser(int id)
         {
             var response = await HttpClient.GetAsync($"user/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка получения пользователя") { Data = { { "Content", errorContent } } };
+            };
             return await response.Content.ReadFromJsonAsync<User>();
-        }
-
-        public string GetToken()
-        {
-            return Token;
         }
     }
 }

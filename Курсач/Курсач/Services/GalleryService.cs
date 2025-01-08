@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Курсач.Core.Interfaces;
 using Курсач.Data.DTO;
@@ -22,21 +20,33 @@ namespace Курсач.Services
         public async Task<BelongToGallery> CreateGallery(GalleryData galleryData)
         {
             var response = await HttpClient.PostAsJsonAsync("user/Book/Character/gallery", galleryData);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка создания галереи") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<BelongToGallery>();
         }
 
         public async Task<BelongToGallery> GetGallery(int id)
         {
             var response = await HttpClient.GetAsync($"user/Book/Character/gallery/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка получения галереи") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<BelongToGallery>();
         }
 
         public async Task DeletePictureFromGallery(int idPicture)
         {
             var response = await HttpClient.DeleteAsync($"user/Book/Character/gallery/{idPicture}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка удаления картинки из галереи") { Data = { { "Content", errorContent } } };
+            }
         }
     }
 }

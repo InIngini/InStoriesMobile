@@ -12,16 +12,31 @@ namespace Курсач
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Page3 : ContentPage
     {
-        string nameBook;
-        public Page3(string nameBook)
+        private IServiceProvider ServiceProvider { get; set; }
+        private string NameBook;
+        public Page3(IServiceProvider serviceProvider, string nameBook)
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            this.nameBook = nameBook;
+
+            NameBook = nameBook;
+
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
             //название книги
             var nameLabel = new Label
             {
-                Text = nameBook,
+                Text = NameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -117,33 +132,33 @@ namespace Курсач
         {
             if (sender is ImageButton imageButton)
             {
-                await Navigation.PushAsync(new Page3_1(nameBook, "", "Личность"));
+                await Navigation.PushAsync(new Page3_1(ServiceProvider, NameBook, "", "Личность"));
             }
             else
             {
                 Button button = (Button)sender;  // Получение объекта Button, который отправил событие
                 string namePerson = button.AutomationId;  // Получение текста кнопки
 
-                await Navigation.PushAsync(new Page3_1(nameBook, namePerson, "Личность"));
+                await Navigation.PushAsync(new Page3_1(ServiceProvider, NameBook, namePerson, "Личность"));
             }
 
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(nameBook));
+            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(nameBook));
+            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(nameBook));
+            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(nameBook));
+            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
         }
     }
 }

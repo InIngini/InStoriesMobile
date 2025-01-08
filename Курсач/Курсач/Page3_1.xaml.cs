@@ -12,20 +12,37 @@ namespace Курсач
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Page3_1 : ContentPage
     {
-        string nameBook;
-        string namePerson;
-        string кнопка;
-        public Page3_1(string nameBook, string namePerson, string кнопка)
+        private string NameBook;
+        private string NamePerson;
+        private string Кнопка;
+        private IServiceProvider ServiceProvider { get; set; }
+        public Page3_1(IServiceProvider serviceProvider, string nameBook, string namePerson, string кнопка)
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            this.nameBook = nameBook;
-            this.namePerson = namePerson;
-            this.кнопка = кнопка;
+
+            NameBook = nameBook;
+            NamePerson = namePerson;
+            Кнопка = кнопка;
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDataAsync();
+
+            if (Кнопка == "Биография")
+                ScrollToIndex(5);
+        }
+
+        private async Task LoadDataAsync()
+        {
             //название книги
             var nameLabel = new Label
             {
-                Text = nameBook,
+                Text = NameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -39,7 +56,7 @@ namespace Курсач
 
             Bar.Children.Add(nameLabel, 1, 0);
 
-            if (кнопка == "Личность")
+            if (Кнопка == "Личность")
                 Button_Clicked(button1, EventArgs.Empty);//по умолчанию открыта личность
             else//Биография
             {
@@ -48,12 +65,7 @@ namespace Курсач
             }
 
         }
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-            if (кнопка == "Биография")
-                ScrollToIndex(5);
-        }
+
         List<string> textList1 = new List<string>
         {
             "Имя: ФИО, Прозвище",
@@ -106,7 +118,7 @@ namespace Курсач
 
                 Label namePersonLabel = new Label
                 {
-                    Text = namePerson, // Замените namePerson на фактическое значение
+                    Text = NamePerson, // Замените namePerson на фактическое значение
                     TextColor = Color.White,
                     FontFamily = "Istok Web Bold",
                     FontSize = 20,
@@ -798,25 +810,25 @@ namespace Курсач
             Button button = (Button)sender;
             string text = button.AutomationId;
             //тут надо написать, что ничего не сохранится
-            await Navigation.PushAsync(new Page3_2(nameBook, text, namePerson));
+            await Navigation.PushAsync(new Page3_2(ServiceProvider, NameBook, text, NamePerson));
 
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(nameBook));
+            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(nameBook));
+            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(nameBook));
+            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(nameBook));
+            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
         }
     }
 }

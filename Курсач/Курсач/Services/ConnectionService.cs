@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Курсач.Core.Interfaces;
 using Курсач.Data.DTO;
@@ -22,21 +20,33 @@ namespace Курсач.Services
         public async Task<Connection> CreateConnection(ConnectionData connectionData)
         {
             var response = await HttpClient.PostAsJsonAsync("user/Book/Scheme/connection", connectionData);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка создания соединения") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<Connection>();
         }
 
         public async Task<Connection> GetConnection(int id)
         {
             var response = await HttpClient.GetAsync($"user/Book/Scheme/connection/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка получения соединения") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<Connection>();
         }
 
         public async Task DeleteConnection(int id)
         {
             var response = await HttpClient.DeleteAsync($"user/Book/Scheme/connection/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка удаления соединения") { Data = { { "Content", errorContent } } };
+            }
         }
     }
 }

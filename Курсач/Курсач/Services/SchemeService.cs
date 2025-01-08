@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using Курсач.Core.Interfaces;
 using Курсач.Data.DTO;
@@ -22,27 +20,43 @@ namespace Курсач.Services
         public async Task<Scheme> CreateScheme(SchemeData schemeData)
         {
             var response = await HttpClient.PostAsJsonAsync("user/Book/scheme", schemeData);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка создания схемы") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<Scheme>();
         }
 
         public async Task<Scheme> GetScheme(int id)
         {
             var response = await HttpClient.GetAsync($"user/Book/scheme/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка получения схемы") { Data = { { "Content", errorContent } } };
+            }
             return await response.Content.ReadFromJsonAsync<Scheme>();
         }
 
         public async Task UpdateScheme(int id, int connectionId)
         {
             var response = await HttpClient.PutAsJsonAsync($"user/Book/scheme/{id}", connectionId);
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка обновления схемы") { Data = { { "Content", errorContent } } };
+            }
         }
 
         public async Task DeleteScheme(int id)
         {
             var response = await HttpClient.DeleteAsync($"user/Book/scheme/{id}");
-            response.EnsureSuccessStatusCode();
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new Exception("Ошибка удаления схемы") { Data = { { "Content", errorContent } } };
+            }
         }
     }
 }

@@ -15,20 +15,35 @@ namespace Курсач
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Page3_2 : ContentPage
     {
-        string nameBook;
-        string namePerson;
-        string запись;
-        public Page3_2(string nameBook, string запись,string person)
+        private string NameBook;
+        private string NamePerson;
+        private string Запись; 
+        private IServiceProvider ServiceProvider { get; set; }
+        public Page3_2(IServiceProvider serviceProvider, string nameBook, string запись, string person)
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            this.nameBook = nameBook;
-            this.namePerson = person;
-            this.запись = запись;
+
+            NameBook = nameBook;
+            NamePerson = person;
+            Запись = запись;
+
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
             //название книги
             var nameLabel = new Label
             {
-                Text = nameBook,
+                Text = NameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -44,7 +59,7 @@ namespace Курсач
             // Entry в первой строке
             Entry entry1 = new Entry
             {
-                Text = запись,
+                Text = Запись,
                 TextColor = Color.White,
                 FontFamily = "Istok Web",
                 FontSize = 25
@@ -206,23 +221,23 @@ namespace Курсач
         }
         private async void Button3_1_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3_1(nameBook,namePerson,"Биография"));
+            await Navigation.PushAsync(new Page3_1(ServiceProvider, NameBook,NamePerson,"Биография"));
         }
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(nameBook));
+            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(nameBook));
+            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(nameBook));
+            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(nameBook));
+            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
         }
     }
 }

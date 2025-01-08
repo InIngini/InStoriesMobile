@@ -14,20 +14,33 @@ namespace Курсач
     {
         private AbsoluteLayout layout;
 
-        string nameBook;
-        public Page4(string nameBook)
+        private IServiceProvider ServiceProvider { get; set; }
+        private string NameBook;
+        public Page4(IServiceProvider serviceProvider, string nameBook)
         {
+            ServiceProvider = serviceProvider;
+
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
-            this.nameBook = nameBook;
+
+            NameBook = nameBook;
+
+        }
+
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
 
             // Создаем диаграмму
-            
             layout = new AbsoluteLayout();
             layout.HorizontalOptions = LayoutOptions.Center;
             layout.VerticalOptions = LayoutOptions.Center;
             
-
             Shema(1);
 
             scrollView.Content = layout;
@@ -228,24 +241,24 @@ namespace Курсач
             Button button = (Button)sender;  // Получение объекта Button, который отправил событие
             string buttonText = button.AutomationId;  // Получение текста кнопки
 
-            await Navigation.PushAsync(new Page3_1(nameBook, buttonText, "Личность"));
+            await Navigation.PushAsync(new Page3_1(ServiceProvider, NameBook, buttonText, "Личность"));
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(nameBook));
+            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(nameBook));
+            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(nameBook));
+            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(nameBook));
+            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
         }
     }
 }

@@ -12,7 +12,6 @@ namespace Курсач.Core.Interfaces
         Task<User> RegisterUser(LoginData loginData);
         Task<string> LoginUser(LoginData loginData);
         Task<User> GetUser(int id);
-        string GetToken();
     }
 
 }

@@ -7,27 +7,30 @@ using System.Threading.Tasks;
 using System.Threading;
 using Курсач.Services;
 using Курсач.Core.Interfaces;
+using Курсач.Common;
 
 namespace Курсач
 {
     public class AuthorizationHandler : DelegatingHandler
     {
-        private readonly IUserService UserService;
-
-        public AuthorizationHandler(UserService userService)
-        {
-            UserService = userService;
-        }
-
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var token = UserService.GetToken();
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var token = UserData.UserTokenData.Token;
+
+                if (!string.IsNullOrEmpty(token))
+                {
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                }
+
+                return await base.SendAsync(request, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ошибка с передачей токена");
             }
 
-            return await base.SendAsync(request, cancellationToken);
         }
     }
 

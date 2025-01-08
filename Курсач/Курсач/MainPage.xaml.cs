@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,15 +18,17 @@ namespace Курсач
 {
 	public partial class MainPage : ContentPage
 	{
+        private IServiceProvider ServiceProvider { get; set; }
         private IUserService UserService { get; set; }
 
         //наши дорогие ширина и высота, теперь от них зависит все!
         private double screenWidth;
         private double screenHeight;
 
-        public MainPage(IUserService userService)
+        public MainPage(IServiceProvider serviceProvider)
 		{
-            UserService = userService;
+            ServiceProvider = serviceProvider;
+            UserService = ServiceProviderServiceExtensions.GetService<IUserService>(ServiceProvider);
 
             var metrics = Xamarin.Essentials.DeviceDisplay.MainDisplayInfo;
             screenWidth = metrics.Width / metrics.Density;
@@ -49,7 +52,7 @@ namespace Курсач
             try
             {
                 var token = await UserService.LoginUser(loginData);
-                await Navigation.PushAsync(new Page1());
+                await Navigation.PushAsync(new Page1(ServiceProvider));
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,20 +7,39 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Курсач.Common;
+using Курсач.Core.Interfaces;
+using Курсач.Data.Entities;
+using Курсач.Errors;
 
 namespace Курсач
 {
 	[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Page1 : ContentPage
 	{
-        List<string> buttonList;
+        private IServiceProvider ServiceProvider { get; set; }
+        private IBookService BookService { get; set; }
 
-        public Page1 ()
+        private List<string> ButtonList;
+
+        public Page1(IServiceProvider serviceProvider)
 		{
-			InitializeComponent ();
+            ServiceProvider = serviceProvider;
+            BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
+            
+            InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
+        }
 
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDataAsync();
+        }
+
+        private async Task LoadDataAsync()
+        {
             //1
             //аватар и ник
             var avatarImage = new ImageButton
@@ -31,10 +51,9 @@ namespace Курсач
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
                 VerticalOptions = LayoutOptions.CenterAndExpand
             };
-
             var nameLabel = new Label
             {
-                Text = "Имя пользователя",
+                Text = UserData.UserTokenData.Login,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -42,29 +61,42 @@ namespace Курсач
             };
             if (nameLabel.Text.Length > 12)
             {
-                nameLabel.Text = nameLabel.Text.Substring(0,12) + "...";
+                nameLabel.Text = nameLabel.Text.Substring(0, 12) + "...";
             }
 
-            Bar.Children.Add(avatarImage,0,0);
-            Bar.Children.Add(nameLabel,1,0);
+            Bar.Children.Add(avatarImage, 0, 0);
+            Bar.Children.Add(nameLabel, 1, 0);
 
             //2
             //книжки
-            buttonList = new List<string> { "Book's name", "Book's long name", "Book's very long name"}; // Ваш список строк для текста кнопок
+            int id = UserData.UserTokenData.UserId;
+            var book = new List<Book>();
 
-            int rowCount = buttonList.Count / 2 + 1; // Определить количество строк
+            try
+            {
+                book = await BookService.GetAllBooksForUser(id);
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = await ErrorsDeserialization.Deserialization(ex);
+                await DisplayAlert("Ошибка", errorMessage, "OK");
+            }
+
+            ButtonList = book.Select(x => x.NameBook).ToList();
+
+            int rowCount = ButtonList.Count / 2 + 1; // Определить количество строк
 
             for (int i = 0; i < rowCount; i++)
             {
                 buttonsGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(157) });
             }
 
-            for (int i = 0; i < buttonList.Count; i++)
+            for (int i = 0; i < ButtonList.Count; i++)
             {
                 var button = new Button
                 {
-                    AutomationId = buttonList[i],
-                    Text = buttonList[i],
+                    AutomationId = ButtonList[i],
+                    Text = ButtonList[i],
                     FontSize = 20,
                     FontFamily = "Istok Web",
                     TextColor = Color.White,
@@ -76,8 +108,7 @@ namespace Курсач
                     HorizontalOptions = LayoutOptions.Center,
                     HeightRequest = 157,
                     WidthRequest = 123,
-                    Margin = new Thickness(2,0,2,0),
-                    
+                    Margin = new Thickness(2, 0, 2, 0),
                 };
                 button.Clicked += Button_Clicked;
 
@@ -107,23 +138,21 @@ namespace Курсач
                 stackLayout.Children.Add(rectangle);
 
                 buttonsGrid.RowSpacing = 44;
-
-                //buttonsGrid.RowSpacing = 44; // Устанавливаем расстояние между строками в buttonsGrid
                 buttonsGrid.Children.Add(stackLayout, i % 2, i / 2);
             }
         }
 
-        private async void Button_Clicked(object sender, EventArgs e)
+            private async void Button_Clicked(object sender, EventArgs e)
         {
             Button button = (Button)sender;  // Получение объекта Button, который отправил событие
             string buttonText = button.AutomationId;  // Получение текста кнопки
 
-            await Navigation.PushAsync(new Page2(buttonText));  // Передача текста кнопки в конструктор Page2
+            await Navigation.PushAsync(new Page2(ServiceProvider, buttonText));  // Передача текста кнопки в конструктор Page2
         }
 
         private async void ImageButton_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2("Новая книга"));  // Передача текста кнопки в конструктор Page2
+            await Navigation.PushAsync(new Page2(ServiceProvider, "Новая книга"));  // Передача текста кнопки в конструктор Page2
         }
     }
 }

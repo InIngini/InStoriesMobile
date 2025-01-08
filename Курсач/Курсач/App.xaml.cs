@@ -16,9 +16,8 @@ namespace Курсач
             InitializeComponent();
 
             ServiceProvider = OnConfiguration();
-            var userService = ServiceProviderServiceExtensions.GetService<IUserService>(ServiceProvider);
 
-            MainPage = new NavigationPage(new MainPage(userService));
+            MainPage = new NavigationPage(new MainPage(ServiceProvider));
         }
 
         public IServiceProvider OnConfiguration()
@@ -34,6 +33,8 @@ namespace Курсач
             services.AddScoped<ISchemeService, SchemeService>();
             services.AddScoped<ITimelineService, TimelineService>();
             services.AddScoped<IUserService, UserService>();
+
+            services.AddTransient<AuthorizationHandler>();
 
             RegisterHttpClient<IUserService, UserService> (services);
             RegisterHttpClient<IBookService, BookService>(services, true);
