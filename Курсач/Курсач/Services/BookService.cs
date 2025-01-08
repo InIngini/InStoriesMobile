@@ -12,42 +12,42 @@ namespace Курсач.Services
 {
     public class BookService : IBookService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient HttpClient;
 
         public BookService(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            HttpClient = httpClient;
         }
 
         public async Task<Book> CreateBook(UserBookData bookData)
         {
-            var response = await _httpClient.PostAsJsonAsync("user/book", bookData);
+            var response = await HttpClient.PostAsJsonAsync("user/book", bookData);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Book>();
         }
 
         public async Task<Book> GetBook(int id)
         {
-            var response = await _httpClient.GetAsync($"user/book/{id}");
+            var response = await HttpClient.GetAsync($"user/book/{id}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Book>();
         }
 
         public async Task UpdateBook(int id, Book book)
         {
-            var response = await _httpClient.PutAsJsonAsync($"user/book/{id}", book);
+            var response = await HttpClient.PutAsJsonAsync($"user/book/{id}", book);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteBook(int id)
         {
-            var response = await _httpClient.DeleteAsync($"user/book/{id}");
+            var response = await HttpClient.DeleteAsync($"user/book/{id}");
             response.EnsureSuccessStatusCode();
         }
 
         public async Task<List<Book>> GetAllBooksForUser(int userId)
         {
-            var response = await _httpClient.GetAsync($"user/book/all?userId={userId}");
+            var response = await HttpClient.GetAsync($"user/book/all?userId={userId}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<List<Book>>();
         }

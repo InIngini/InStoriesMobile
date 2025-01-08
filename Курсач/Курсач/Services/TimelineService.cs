@@ -12,36 +12,36 @@ namespace Курсач.Services
 {
     public class TimelineService : ITimelineService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient HttpClient;
 
         public TimelineService(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            HttpClient = httpClient;
         }
 
         public async Task<Timeline> CreateTimeline(TimelineData timelineData)
         {
-            var response = await _httpClient.PostAsJsonAsync("user/Book/timeline", timelineData);
+            var response = await HttpClient.PostAsJsonAsync("user/Book/timeline", timelineData);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Timeline>();
         }
 
         public async Task<Timeline> GetTimeline(int id)
         {
-            var response = await _httpClient.GetAsync($"user/Book/timeline/{id}");
+            var response = await HttpClient.GetAsync($"user/Book/timeline/{id}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Timeline>();
         }
 
         public async Task UpdateTimeline(int id, int eventId)
         {
-            var response = await _httpClient.PutAsJsonAsync($"user/Book/timeline/{id}", eventId);
+            var response = await HttpClient.PutAsJsonAsync($"user/Book/timeline/{id}", eventId);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteTimeline(int id)
         {
-            var response = await _httpClient.DeleteAsync($"user/Book/timeline/{id}");
+            var response = await HttpClient.DeleteAsync($"user/Book/timeline/{id}");
             response.EnsureSuccessStatusCode();
         }
     }

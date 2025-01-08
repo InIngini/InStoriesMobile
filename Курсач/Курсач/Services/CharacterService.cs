@@ -12,36 +12,36 @@ namespace Курсач.Services
 {
     public class CharacterService : ICharacterService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClient HttpClient;
 
         public CharacterService(HttpClient httpClient)
         {
-            _httpClient = httpClient;
+            HttpClient = httpClient;
         }
 
         public async Task<Character> CreateCharacter(BookCharacterData bookCharacterData)
         {
-            var response = await _httpClient.PostAsJsonAsync("user/Book/character", bookCharacterData);
+            var response = await HttpClient.PostAsJsonAsync("user/Book/character", bookCharacterData);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Character>();
         }
 
         public async Task<Character> GetCharacter(int id)
         {
-            var response = await _httpClient.GetAsync($"user/Book/character/{id}");
+            var response = await HttpClient.GetAsync($"user/Book/character/{id}");
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadFromJsonAsync<Character>();
         }
 
         public async Task UpdateCharacter(int id, CharacterWithAnswers characterWithAnswers)
         {
-            var response = await _httpClient.PutAsJsonAsync($"user/Book/character/{id}", characterWithAnswers);
+            var response = await HttpClient.PutAsJsonAsync($"user/Book/character/{id}", characterWithAnswers);
             response.EnsureSuccessStatusCode();
         }
 
         public async Task DeleteCharacter(int id)
         {
-            var response = await _httpClient.DeleteAsync($"user/Book/character/{id}");
+            var response = await HttpClient.DeleteAsync($"user/Book/character/{id}");
             response.EnsureSuccessStatusCode();
         }
     }
