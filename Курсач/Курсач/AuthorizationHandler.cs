@@ -5,8 +5,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using Курсач.Services;
-using Курсач.Core.Interfaces;
 using Курсач.Common;
 
 namespace Курсач
@@ -17,7 +15,7 @@ namespace Курсач
         {
             try
             {
-                var token = UserData.UserTokenData.Token;
+                var token = CommonData.Token;
 
                 if (!string.IsNullOrEmpty(token))
                 {

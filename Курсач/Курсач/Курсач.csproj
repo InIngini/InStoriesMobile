@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="appsettings.json" />
     <None Remove="IstokWeb-Bold.ttf" />
     <None Remove="IstokWeb-Regular.ttf" />
     <None Remove="Italiana-Regular.ttf" />
@@ -21,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="appsettings.json" />
     <EmbeddedResource Include="Sources\IstokWeb-Bold.ttf" />
     <EmbeddedResource Include="Sources\IstokWeb-Regular.ttf" />
     <EmbeddedResource Include="Sources\Italiana-Regular.ttf" />
@@ -29,12 +31,18 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Net.Http.Json" Version="9.0.0" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2196" />
     <PackageReference Include="Xamarin.Essentials" Version="1.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Курсач.Core\Курсач.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>

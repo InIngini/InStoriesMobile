@@ -1,19 +1,29 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Курсач.Core.DB;
+using Курсач.Core.DB.Interfaces;
 using Курсач.Core.Interfaces;
-using Курсач.Services;
+using Курсач.Core.Services;
+using System.Configuration;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Text;
 
 namespace Курсач
 {
     public partial class App : Application
     {
         private readonly IServiceProvider ServiceProvider;
+        public IConfiguration Configuration { get; private set; }
 
         public App()
         {
             InitializeComponent();
+
+            LoadConfiguration();
 
             ServiceProvider = OnConfiguration();
 
@@ -23,6 +33,10 @@ namespace Курсач
         public IServiceProvider OnConfiguration()
         {
             var services = new ServiceCollection();
+
+            services.AddSingleton(Configuration);
+
+            services.AddScoped<IDatabaseManager, DatabaseManager>();
 
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ICharacterService, CharacterService>();
@@ -64,6 +78,24 @@ namespace Курсач
                 clientBuilder.AddHttpMessageHandler<AuthorizationHandler>();
             }
         }
+
+        private void LoadConfiguration()
+        {
+            var assembly = typeof(App).Assembly;
+            using (var stream = assembly.GetManifestResourceStream("Курсач.appsettings.json"))
+            {
+                if (stream == null)
+                {
+                    throw new FileNotFoundException("appsettings.json не найден.");
+                }
+
+                var builder = new ConfigurationBuilder()
+                    .AddJsonStream(stream);
+
+                Configuration = builder.Build();
+            }
+        }
+
 
         protected override void OnStart()
         {

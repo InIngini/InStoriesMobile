@@ -7,18 +7,19 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
-using Курсач.Common;
+using Курсач.Core.Data.Entities;
+using Курсач.Core.DB.Interfaces;
+using Курсач.Core.Errors;
 using Курсач.Core.Interfaces;
-using Курсач.Data.Entities;
-using Курсач.Errors;
 
 namespace Курсач
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+    [XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class Page1 : ContentPage
 	{
         private IServiceProvider ServiceProvider { get; set; }
         private IBookService BookService { get; set; }
+        private IDatabaseManager DatabaseManager {  get; set; }
 
         private List<string> ButtonList;
 
@@ -26,7 +27,8 @@ namespace Курсач
 		{
             ServiceProvider = serviceProvider;
             BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
-            
+            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
+
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
@@ -42,6 +44,7 @@ namespace Курсач
         {
             //1
             //аватар и ник
+            User user = await DatabaseManager.GetUserAsync();
             var avatarImage = new ImageButton
             {
                 Source = "avatar.png",
@@ -53,7 +56,7 @@ namespace Курсач
             };
             var nameLabel = new Label
             {
-                Text = UserData.UserTokenData.Login,
+                Text = user.Login,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -69,7 +72,7 @@ namespace Курсач
 
             //2
             //книжки
-            int id = UserData.UserTokenData.UserId;
+            int id = user.Id;
             var book = new List<Book>();
 
             try

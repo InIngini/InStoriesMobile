@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
+using Курсач.Core.Data.DTO;
+using Курсач.Core.Errors;
 using Курсач.Core.Interfaces;
-using Курсач.Data.DTO;
-using Курсач.Errors;
 
 namespace Курсач
 {
-	public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage
 	{
         private IServiceProvider ServiceProvider { get; set; }
         private IUserService UserService { get; set; }
