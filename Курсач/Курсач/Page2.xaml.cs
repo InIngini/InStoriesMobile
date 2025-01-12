@@ -43,7 +43,8 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
-            var nameBook = (await DatabaseManager.GetBookAsync(BookId)).NameBook;
+            var book = await DatabaseManager.GetBookAsync(BookId);
+            var nameBook = book != null ? book.NameBook : "Новая книга";
             //название книги
             var nameLabel = new Label
             {
