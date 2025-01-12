@@ -37,6 +37,7 @@ namespace Курсач
             services.AddSingleton(Configuration);
 
             services.AddScoped<IDatabaseManager, DatabaseManager>();
+            services.AddScoped<IDatabaseSyncService, DatabaseSyncService>();
 
             services.AddScoped<IBookService, BookService>();
             services.AddScoped<ICharacterService, CharacterService>();

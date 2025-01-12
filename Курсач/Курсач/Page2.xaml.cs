@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,11 @@ using System.Threading.Tasks;
 
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Курсач.Common;
+using Курсач.Core.Data.DTO;
+using Курсач.Core.Data.Entities;
+using Курсач.Core.DB.Interfaces;
+using Курсач.Core.Interfaces;
 
 namespace Курсач
 {
@@ -13,15 +19,19 @@ namespace Курсач
     public partial class Page2 : ContentPage
     {
         private IServiceProvider ServiceProvider { get; set; }
-        private string NameBook;
-        public Page2(IServiceProvider serviceProvider, string nameBook)
+        private IBookService BookService { get; set; }
+        private IDatabaseManager DatabaseManager { get; set; }
+        private int BookId;
+        public Page2(IServiceProvider serviceProvider, int id)
         {
             ServiceProvider = serviceProvider;
+            BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
+            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
-            NameBook = nameBook;
+            BookId = id;
 
         }
 
@@ -33,10 +43,11 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
+            var nameBook = (await DatabaseManager.GetBookAsync(BookId)).NameBook;
             //название книги
             var nameLabel = new Label
             {
-                Text = NameBook,
+                Text = nameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -63,10 +74,11 @@ namespace Курсач
             };
             Editor textEditor = new Editor
             {
+                AutomationId = "BookName",
                 WidthRequest = 100,
                 HeightRequest = 100,
                 BackgroundColor = Color.Transparent,
-                Text = NameBook,
+                Text = nameBook,
                 FontSize = 20,
                 FontFamily = "Istok Web",
                 TextColor = Color.White
@@ -118,28 +130,61 @@ namespace Курсач
             buttonsGrid.Children.Add(stackLayout, 1, 0);
 
         }
+
+        private async Task<int> SaveBook()
+        {
+            var foundStackLayout = buttonsGrid.Children
+                    .FirstOrDefault(x => x is StackLayout && ((StackLayout)x).Children.OfType<Editor>().Any()) as StackLayout;
+            var foundEditor = foundStackLayout.Children
+                    .FirstOrDefault(x => x is Editor && ((Editor)x).AutomationId == "BookName") as Editor;
+
+            if (BookId == 0)
+            {
+                var userBook = new UserBookData()
+                {
+                    UserId = (await DatabaseManager.GetUserAsync()).Id,
+                    NameBook = foundEditor.Text
+                };
+                var book = await BookService.CreateBook(userBook);
+                return book.Id;
+            }
+            else
+            {
+                var book = new Book()
+                {
+                    Id = BookId,
+                    NameBook = foundEditor.Text
+                };
+                await BookService.UpdateBook(BookId, book);
+                return book.Id;
+            }
+        }
+
         private async void Button1_Clicked(object sender, EventArgs e)
         {
-            //тут надо написать, что ничего не сохранится
+            await SaveBook();
             await Navigation.PushAsync(new Page1(ServiceProvider));
-
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
+            var id = await SaveBook();
+            await Navigation.PushAsync(new Page2(ServiceProvider, id));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
+            var id = await SaveBook();
+            await Navigation.PushAsync(new Page3(ServiceProvider, id));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
+            var id = await SaveBook();
+            await Navigation.PushAsync(new Page4(ServiceProvider, id));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
+            var id = await SaveBook();
+            await Navigation.PushAsync(new Page5(ServiceProvider, id));
         }
     }
 }

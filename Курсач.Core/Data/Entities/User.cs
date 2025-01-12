@@ -10,7 +10,7 @@ namespace Курсач.Core.Data.Entities
         /// <summary>
         /// Уникальный идентификатор пользователя.
         /// </summary>
-        [PrimaryKey, AutoIncrement]
+        [PrimaryKey]
         public int Id { get; set; }
 
         /// <summary>

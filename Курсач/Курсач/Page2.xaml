@@ -37,7 +37,7 @@
                     <ColumnDefinition Width="200" />
                 </Grid.ColumnDefinitions>
 
-                <BoxView Grid.Column="1" BackgroundColor="White" HeightRequest="0.5" WidthRequest="180"
+                <BoxView Grid.Column="1" BackgroundColor="White" HeightRequest="0.5" WidthRequest="200"
                         Margin="0, 125, 0, 195" HorizontalOptions="Center"/>
             </Grid>
 

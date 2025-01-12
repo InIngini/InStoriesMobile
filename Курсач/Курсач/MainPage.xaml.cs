@@ -11,6 +11,8 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Курсач.Core.Data.DTO;
+using Курсач.Core.DB;
+using Курсач.Core.DB.Interfaces;
 using Курсач.Core.Errors;
 using Курсач.Core.Interfaces;
 
@@ -37,8 +39,8 @@ namespace Курсач
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
-            //if (true)
-            //    Button_Clicked(button, EventArgs.Empty);
+            if (true)
+                Button_Clicked(button, EventArgs.Empty);
         }
 
         private async void Button_Clicked(object sender, EventArgs e)

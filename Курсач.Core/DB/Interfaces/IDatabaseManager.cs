@@ -11,5 +11,12 @@ namespace Курсач.Core.DB.Interfaces
         Task<User> GetUserAsync();
         Task AddUserAsync(User user);
         Task DeleteUserAsync();
+
+        Task<Book> GetBookAsync(int id);
+        Task AddBookAsync(Book book);
+        Task UpdateBookAsync(Book book);
+        Task DeleteBookAsync(int id);
+        Task DeleteAllBooksAsync();
+        Task<List<Book>> GetAllBooksAsync();
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace Курсач.Core.Data.Entities
+﻿using SQLite;
+
+namespace Курсач.Core.Data.Entities
 {
     /// <summary>
     /// Класс, представляющий книгу.
@@ -8,6 +10,7 @@
         /// <summary>
         /// Уникальный идентификатор книги.
         /// </summary>
+        [PrimaryKey]
         public int Id { get; set; }
 
         /// <summary>
@@ -23,6 +26,7 @@
         /// <summary>
         /// Связанное изображение книги.
         /// </summary>
+        [Ignore] 
         public Picture Picture { get; set; }
     }
 }

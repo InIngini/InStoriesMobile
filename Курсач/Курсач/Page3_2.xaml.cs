@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,24 +10,27 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using Курсач.Core.DB.Interfaces;
 
 namespace Курсач
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class Page3_2 : ContentPage
     {
-        private string NameBook;
+        private int BookId;
         private string NamePerson;
         private string Запись; 
         private IServiceProvider ServiceProvider { get; set; }
-        public Page3_2(IServiceProvider serviceProvider, string nameBook, string запись, string person)
+        private IDatabaseManager DatabaseManager { get; set; }
+        public Page3_2(IServiceProvider serviceProvider, int id, string запись, string person)
         {
             ServiceProvider = serviceProvider;
+            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
-            NameBook = nameBook;
+            BookId = id;
             NamePerson = person;
             Запись = запись;
 
@@ -40,10 +44,11 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
+            var nameBook = (await DatabaseManager.GetBookAsync(BookId)).NameBook;
             //название книги
             var nameLabel = new Label
             {
-                Text = NameBook,
+                Text = nameBook,
                 FontFamily = "Istok Web",
                 FontSize = 20,
                 TextColor = Color.White,
@@ -221,23 +226,23 @@ namespace Курсач
         }
         private async void Button3_1_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3_1(ServiceProvider, NameBook,NamePerson,"Биография"));
+            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId,NamePerson,"Биография"));
         }
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page2(ServiceProvider, NameBook));
+            await Navigation.PushAsync(new Page2(ServiceProvider, BookId));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3(ServiceProvider, NameBook));
+            await Navigation.PushAsync(new Page3(ServiceProvider, BookId));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page4(ServiceProvider, NameBook));
+            await Navigation.PushAsync(new Page4(ServiceProvider, BookId));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page5(ServiceProvider, NameBook));
+            await Navigation.PushAsync(new Page5(ServiceProvider, BookId));
         }
     }
 }

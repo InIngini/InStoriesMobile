@@ -26,7 +26,7 @@
         public Book Book { get; set; }
 
         /// <summary>
-        /// Тип принадлежности (например, прочитанная, в библиотеке и т.д.).
+        /// Тип принадлежности (автор, соавтор).
         /// </summary>
         public int TypeBelong { get; set; }
     }
