@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
 using Курсач.Core.Services.Interfaces;
+using Курсач.Core.Common;
 
 namespace Курсач
 {
@@ -72,9 +73,9 @@ namespace Курсач
             var clientBuilder = services.AddHttpClient<TService, TImplementation>()
                 .ConfigureHttpClient(client =>
                 {
-                    client.BaseAddress = new Uri("http://10.0.2.2:5153/");
+                    client.BaseAddress = new Uri("http://192.168.1.33:5153/");
                 });
-
+            clientBuilder.AddHttpMessageHandler(() => new PingHandler("192.168.1.33","5153"));
             if (addAuthorizationHandler)
             {
                 clientBuilder.AddHttpMessageHandler<AuthorizationHandler>();

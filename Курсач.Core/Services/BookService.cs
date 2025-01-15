@@ -5,8 +5,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using Курсач.Core.Common;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
+using Курсач.Core.DB;
 using Курсач.Core.DB.Interfaces;
 using Курсач.Core.Services.Interfaces;
 
@@ -15,12 +17,12 @@ namespace Курсач.Core.Services
     public class BookService : IBookService
     {
         private readonly HttpClient HttpClient;
-        private IBookRepository DatabaseManager { get; set; }
+        private IBookRepository BookRepository { get; set; }
 
         public BookService(HttpClient httpClient, IBookRepository databaseManager)
         {
             HttpClient = httpClient;
-            DatabaseManager = databaseManager;
+            BookRepository = databaseManager;
         }
 
         public async Task<Book> CreateBook(UserBookData bookData)
@@ -37,7 +39,7 @@ namespace Курсач.Core.Services
                 }
                 book = await response.Content.ReadFromJsonAsync<Book>();
 
-                await DatabaseManager.AddBookAsync(book);
+                await BookRepository.AddBookAsync(book);
             }
             catch
             {
@@ -62,7 +64,7 @@ namespace Курсач.Core.Services
             }
             catch
             {
-                book = await DatabaseManager.GetBookAsync(id);
+                book = await BookRepository.GetBookAsync(id);
             }
             return book;
         }
@@ -77,11 +79,12 @@ namespace Курсач.Core.Services
                     var errorContent = await response.Content.ReadAsStringAsync();
                     throw new Exception("Ошибка обновления книги") { Data = { { "Content", errorContent } } };
                 }
-                await DatabaseManager.UpdateBookAsync(book);
+                await BookRepository.UpdateBookAsync(book);
             }
             catch
             {
-                throw new Exception("Вы не можете обновить книгу. Возможно, у вас отсутствует подключение к интернету");
+                if (book.NameBook != (await BookRepository.GetBookAsync(book.Id)).NameBook)
+                    throw new Exception("Вы не можете обновить книгу. Возможно, у вас отсутствует подключение к интернету");
             }
         }
 
@@ -95,7 +98,7 @@ namespace Курсач.Core.Services
                     var errorContent = await response.Content.ReadAsStringAsync();
                     throw new Exception("Ошибка удаления книги") { Data = { { "Content", errorContent } } };
                 }
-                await DatabaseManager.DeleteBookAsync(id);
+                await BookRepository.DeleteBookAsync(id);
             }
             catch
             {
@@ -118,7 +121,7 @@ namespace Курсач.Core.Services
             }
             catch
             {
-                books = await DatabaseManager.GetAllBooksAsync();
+                books = await BookRepository.GetAllBooksAsync();
             }
             return books;
         }

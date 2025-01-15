@@ -5,8 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Курсач.Common;
+using Курсач.Core.Common;
 using Курсач.Core.Data.CommonModels;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
@@ -48,8 +50,6 @@ namespace Курсач.Core.Services
                 CommonData.Token = "token"; // Установка токена по умолчанию
                 return CommonData.Token;
             }
-
-            HttpClient.Timeout = TimeSpan.FromSeconds(10);
 
             try
             {

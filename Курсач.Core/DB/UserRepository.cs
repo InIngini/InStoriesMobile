@@ -27,7 +27,8 @@ namespace Курсач.Core.DB
 
         public async Task AddUserAsync(User user)
         {
-            if (Database.Table<User>() == null || Database.Table<User>().FirstOrDefaultAsync(b => b.Id == user.Id) == null) // Если в базе нет пользователя или нет именно этого пользователя
+            var dbu = await Database.Table<User>().ToListAsync();
+            if (dbu.Count == 0 || Database.Table<User>().FirstOrDefaultAsync(b => b.Id == user.Id) == null) // Если в базе нет пользователя или нет именно этого пользователя
             {
                 await DeleteUserAsync();
                 await BookRepository.DeleteAllBooksAsync();
