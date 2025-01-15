@@ -11,7 +11,7 @@ using Курсач.Core.Data.Entities;
 using Курсач.Core.DB;
 using Курсач.Core.DB.Interfaces;
 using Курсач.Core.Errors;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
 {
@@ -20,8 +20,7 @@ namespace Курсач
 	{
         private IServiceProvider ServiceProvider { get; set; }
         private IBookService BookService { get; set; }
-        private IDatabaseManager DatabaseManager {  get; set; }
-        private IDatabaseSyncService DatabaseSyncService { get; set; }
+        private IUserService UserService {  get; set; }
 
         private List<string> ButtonList;
 
@@ -29,8 +28,7 @@ namespace Курсач
 		{
             ServiceProvider = serviceProvider;
             BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
-            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
-            DatabaseSyncService = ServiceProviderServiceExtensions.GetService<IDatabaseSyncService>(ServiceProvider);
+            UserService = ServiceProviderServiceExtensions.GetService<IUserService>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
@@ -47,9 +45,7 @@ namespace Курсач
         {
             //1
             //аватар и ник
-            User user = await DatabaseManager.GetUserAsync();
-
-            await DatabaseSyncService.SyncDatabasesAsync(user.Id); // Синхронизация
+            User user = await UserService.GetUser();
 
             var avatarImage = new ImageButton
             {

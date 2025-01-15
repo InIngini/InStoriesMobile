@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Xamarin.Essentials;
 using Xamarin.Forms;
+using Xamarin.Forms.Maps;
 using Xamarin.Forms.Xaml;
+using Курсач.Core.Data.Maps;
 using Курсач.Core.DB.Interfaces;
 
 namespace Курсач
@@ -15,12 +17,10 @@ namespace Курсач
     public partial class Page5 : ContentPage
     {
         private IServiceProvider ServiceProvider { get; set; }
-        private IDatabaseManager DatabaseManager { get; set; }
         private int BookId;
         public Page5(IServiceProvider serviceProvider, int id)
         {
             ServiceProvider = serviceProvider;
-            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
@@ -37,8 +37,22 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
+            // Убедитесь, что вы используете customMap из XAML, а не создаете новый экземпляр
+            CustomPin pin = new CustomPin
+            {
+                Type = PinType.Place,
+                Position = new Position(37.79752, -122.40183),
+                Label = "Xamarin San Francisco Office",
+                Address = "394 Pacific Ave, San Francisco CA",
+                Name = "Xamarin",
+                Url = "http://xamarin.com/about/"
+            };
 
+            customMap.CustomPins.Add(pin); // Добавляем пин в существующий customMap
+            customMap.Pins.Add(pin);
+            customMap.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(37.79752, -122.40183), Distance.FromMiles(1.0)));
         }
+
 
         private async void Button5_1_Clicked(object sender, EventArgs e)
         {

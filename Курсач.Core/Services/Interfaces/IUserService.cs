@@ -5,13 +5,13 @@ using System.Threading.Tasks;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 
-namespace Курсач.Core.Interfaces
+namespace Курсач.Core.Services.Interfaces
 {
     public interface IUserService
     {
         Task<User> RegisterUser(LoginData loginData);
         Task<string> LoginUser(LoginData loginData);
-        Task<User> GetUser(int id);
+        Task<User> GetUser();
     }
 
 }

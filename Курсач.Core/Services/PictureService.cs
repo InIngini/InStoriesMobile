@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Курсач.Core.Data.Entities;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач.Core.Services
 {

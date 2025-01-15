@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Курсач.Core.Data.Maps;assembly=Курсач.Core"
              x:Class="Курсач.Page5">
     <ContentPage.Content>
         <Grid BackgroundColor="#161519">
@@ -29,7 +30,7 @@
 
             <!-- Основное содержимое с возможностью прокрутки -->
             <Grid x:Name="buttonsGrid" Grid.Row="1" Margin="0,10,0,0" VerticalOptions="Start">
-
+                <local:CustomMap x:Name="customMap" MapType="Street" />
             </Grid>
 
             <!--1-->

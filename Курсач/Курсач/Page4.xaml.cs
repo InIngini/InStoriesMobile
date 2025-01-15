@@ -17,12 +17,10 @@ namespace Курсач
         private AbsoluteLayout layout;
 
         private IServiceProvider ServiceProvider { get; set; }
-        private IDatabaseManager DatabaseManager { get; set; }
         private int BookId;
         public Page4(IServiceProvider serviceProvider, int id)
         {
             ServiceProvider = serviceProvider;
-            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);

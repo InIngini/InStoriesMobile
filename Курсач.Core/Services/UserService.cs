@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using Курсач.Common;
@@ -9,19 +11,21 @@ using Курсач.Core.Data.CommonModels;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 using Курсач.Core.DB.Interfaces;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач.Core.Services
 {
     public class UserService : IUserService
     {
         private readonly HttpClient HttpClient;
-        private readonly IDatabaseManager DatabaseManager;
+        private readonly IUserRepository UserRepository;
+        private readonly IDatabaseSyncService DataBaseSyncService;
 
-        public UserService(HttpClient httpClient, IDatabaseManager databaseManager)
+        public UserService(HttpClient httpClient, IUserRepository userRepository, IDatabaseSyncService dataBaseSyncService)
         {
             HttpClient = httpClient;
-            DatabaseManager = databaseManager;
+            UserRepository = userRepository;
+            DataBaseSyncService = dataBaseSyncService;
         }
 
         public async Task<User> RegisterUser(LoginData loginData)
@@ -39,6 +43,31 @@ namespace Курсач.Core.Services
 
         public async Task<string> LoginUser(LoginData loginData)
         {
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                CommonData.Token = "token"; // Установка токена по умолчанию
+                return CommonData.Token;
+            }
+            //Client.Timeout = TimeSpan.FromSeconds(10);
+
+            //// Issue a request
+            //client.GetAsync(_address).ContinueWith(
+            //    getTask =>
+            //    {
+            //        if (getTask.IsCanceled)
+            //        {
+            //            Console.WriteLine("Request was canceled");
+            //        }
+            //        else if (getTask.IsFaulted)
+            //        {
+            //            Console.WriteLine("Request failed: {0}", getTask.Exception);
+            //        }
+            //        else
+            //        {
+            //            HttpResponseMessage response = getTask.Result;
+            //            Console.WriteLine("Request completed with status code {0}", response.StatusCode);
+            //        }
+            //    });
             try
             {
                 var response = await HttpClient.PostAsJsonAsync("user/login", loginData);
@@ -58,8 +87,10 @@ namespace Курсач.Core.Services
                     Password = loginResponse.UserToken.Password
                 };
 
-                await DatabaseManager.AddUserAsync(user);
+                await UserRepository.AddUserAsync(user);
                 CommonData.Token = loginResponse.UserToken.Token;
+
+                await DataBaseSyncService.SyncDatabasesAsync(user.Id);
             }
             catch
             {
@@ -70,15 +101,11 @@ namespace Курсач.Core.Services
             
         }
 
-        public async Task<User> GetUser(int id)
+        public async Task<User> GetUser()
         {
-            var response = await HttpClient.GetAsync($"user/{id}");
-            if (!response.IsSuccessStatusCode)
-            {
-                var errorContent = await response.Content.ReadAsStringAsync();
-                throw new Exception("Ошибка получения пользователя") { Data = { { "Content", errorContent } } };
-            };
-            return await response.Content.ReadFromJsonAsync<User>();
+            var user = await UserRepository.GetUserAsync();
+            
+            return user;
         }
     }
 }

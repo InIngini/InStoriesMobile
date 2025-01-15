@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 using Курсач.Core.DB.Interfaces;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач.Core.Services
 {
     public class BookService : IBookService
     {
         private readonly HttpClient HttpClient;
-        private IDatabaseManager DatabaseManager { get; set; }
+        private IBookRepository DatabaseManager { get; set; }
 
-        public BookService(HttpClient httpClient, IDatabaseManager databaseManager)
+        public BookService(HttpClient httpClient, IBookRepository databaseManager)
         {
             HttpClient = httpClient;
             DatabaseManager = databaseManager;

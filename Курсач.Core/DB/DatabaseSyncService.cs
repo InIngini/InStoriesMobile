@@ -2,24 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
+using Курсач.Common;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 using Курсач.Core.DB.Interfaces;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач.Core.DB
 {
     public class DatabaseSyncService : IDatabaseSyncService
     {
         private readonly IBookService BookService;
-        private readonly IDatabaseManager DatabaseManager;
+        private readonly IBookRepository BookRepository;
 
-        public DatabaseSyncService(IBookService bookService, IDatabaseManager databaseManager)
+        public DatabaseSyncService(IBookService bookService, IBookRepository bookRepository)
         {
             BookService = bookService;
-            DatabaseManager = databaseManager;
+            BookRepository = bookRepository;
         }
 
         public async Task SyncDatabasesAsync(int userId)
@@ -29,41 +31,38 @@ namespace Курсач.Core.DB
 
         private async Task SyncBooksAsync(int userId)
         {
-            // Получаем все книги из локальной базы данных
-            var localBooks = await DatabaseManager.GetAllBooksAsync();
-            var remoteBooks = await BookService.GetAllBooksForUser(userId);
-
-            // Добавляем новые книги из локальной базы в удаленную
-            if (localBooks.Any())
+            if (NetworkInterface.GetIsNetworkAvailable())
             {
-                foreach (var localBook in localBooks)
+                // Получаем все книги из локальной базы данных
+                var localBooks = await BookRepository.GetAllBooksAsync();
+                var remoteBooks = await BookService.GetAllBooksForUser(userId);
+
+                // Добавляем новые книги из локальной базы в удаленную
+                if (localBooks.Any())
                 {
-                    if (!remoteBooks.Any(r => r.Id == localBook.Id))
+                    foreach (var remoteBook in remoteBooks)
                     {
-                        var userBook = new UserBookData()
+                        if (!localBooks.Any(r => r.Id == remoteBook.Id)) // Если книги еще нет, добавляем
                         {
-                            NameBook = localBook.NameBook,
-                        };
-                        await DatabaseManager.DeleteBookAsync(localBook.Id);
-                        var book = await BookService.CreateBook(userBook);
-                        await DatabaseManager.AddBookAsync(book);
-                    }
-                    else
-                    {
-                        // Если книга уже существует на сервере, сравниваем, если что, обновляем
-                        var remoteBook = remoteBooks.First(r => r.Id == localBook.Id);
-                        if (localBook.NameBook != remoteBook.NameBook)
+                            await BookRepository.AddBookAsync(remoteBook);
+                        }
+                        else
                         {
-                            await BookService.UpdateBook(localBook.Id, localBook);
+                            // Если книга уже существует локально, сравниваем, если что, обновляем
+                            var localBook = localBooks.First(r => r.Id == remoteBook.Id);
+                            if (localBook.NameBook != remoteBook.NameBook)
+                            {
+                                await BookService.UpdateBook(localBook.Id, localBook);
+                            }
                         }
                     }
                 }
-            }
-            else if (remoteBooks.Any())
-            {
-                foreach(var remoteBook in remoteBooks)
+                else if (remoteBooks.Any())
                 {
-                    await DatabaseManager.AddBookAsync(remoteBook);
+                    foreach (var remoteBook in remoteBooks)
+                    {
+                        await BookRepository.AddBookAsync(remoteBook);
+                    }
                 }
             }
         }

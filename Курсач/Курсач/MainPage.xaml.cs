@@ -14,7 +14,7 @@ using Курсач.Core.Data.DTO;
 using Курсач.Core.DB;
 using Курсач.Core.DB.Interfaces;
 using Курсач.Core.Errors;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
 {

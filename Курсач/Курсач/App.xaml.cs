@@ -5,12 +5,12 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Курсач.Core.DB;
 using Курсач.Core.DB.Interfaces;
-using Курсач.Core.Interfaces;
 using Курсач.Core.Services;
 using System.Configuration;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Text;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
 {
@@ -36,7 +36,8 @@ namespace Курсач
 
             services.AddSingleton(Configuration);
 
-            services.AddScoped<IDatabaseManager, DatabaseManager>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
             services.AddScoped<IDatabaseSyncService, DatabaseSyncService>();
 
             services.AddScoped<IBookService, BookService>();

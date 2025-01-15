@@ -11,7 +11,7 @@ using Курсач.Common;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 using Курсач.Core.DB.Interfaces;
-using Курсач.Core.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
 {
@@ -20,19 +20,19 @@ namespace Курсач
     {
         private IServiceProvider ServiceProvider { get; set; }
         private IBookService BookService { get; set; }
-        private IDatabaseManager DatabaseManager { get; set; }
+        private IUserService UserService { get; set; }
+
         private int BookId;
         public Page2(IServiceProvider serviceProvider, int id)
         {
             ServiceProvider = serviceProvider;
             BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
-            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
+            UserService = ServiceProviderServiceExtensions.GetService<IUserService>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
             BookId = id;
-
         }
 
         protected override async void OnAppearing()
@@ -43,7 +43,7 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
-            var book = await DatabaseManager.GetBookAsync(BookId);
+            var book = await BookService.GetBook(BookId);
             var nameBook = book != null ? book.NameBook : "Новая книга";
             //название книги
             var nameLabel = new Label
@@ -143,7 +143,7 @@ namespace Курсач
             {
                 var userBook = new UserBookData()
                 {
-                    UserId = (await DatabaseManager.GetUserAsync()).Id,
+                    UserId = (await UserService.GetUser()).Id,
                     NameBook = foundEditor.Text
                 };
                 var book = await BookService.CreateBook(userBook);

@@ -9,6 +9,7 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using Курсач.Core.DB;
 using Курсач.Core.DB.Interfaces;
+using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
 {
@@ -16,12 +17,12 @@ namespace Курсач
     public partial class Page3 : ContentPage
     {
         private IServiceProvider ServiceProvider { get; set; }
-        private IDatabaseManager DatabaseManager { get; set; }
+        private IBookService BookService { get; set; }
         private int BookId;
         public Page3(IServiceProvider serviceProvider, int id)
         {
             ServiceProvider = serviceProvider;
-            DatabaseManager = ServiceProviderServiceExtensions.GetService<IDatabaseManager>(ServiceProvider);
+            BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
@@ -38,7 +39,7 @@ namespace Курсач
 
         private async Task LoadDataAsync()
         {
-            var nameBook = (await DatabaseManager.GetBookAsync(BookId)).NameBook;
+            var nameBook = (await BookService.GetBook(BookId)).NameBook;
             //название книги
             var nameLabel = new Label
             {
