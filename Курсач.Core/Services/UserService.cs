@@ -48,26 +48,9 @@ namespace Курсач.Core.Services
                 CommonData.Token = "token"; // Установка токена по умолчанию
                 return CommonData.Token;
             }
-            //Client.Timeout = TimeSpan.FromSeconds(10);
 
-            //// Issue a request
-            //client.GetAsync(_address).ContinueWith(
-            //    getTask =>
-            //    {
-            //        if (getTask.IsCanceled)
-            //        {
-            //            Console.WriteLine("Request was canceled");
-            //        }
-            //        else if (getTask.IsFaulted)
-            //        {
-            //            Console.WriteLine("Request failed: {0}", getTask.Exception);
-            //        }
-            //        else
-            //        {
-            //            HttpResponseMessage response = getTask.Result;
-            //            Console.WriteLine("Request completed with status code {0}", response.StatusCode);
-            //        }
-            //    });
+            HttpClient.Timeout = TimeSpan.FromSeconds(10);
+
             try
             {
                 var response = await HttpClient.PostAsJsonAsync("user/login", loginData);

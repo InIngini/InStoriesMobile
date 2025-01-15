@@ -11,6 +11,7 @@ using Курсач.Common;
 using Курсач.Core.Data.DTO;
 using Курсач.Core.Data.Entities;
 using Курсач.Core.DB.Interfaces;
+using Курсач.Core.Errors;
 using Курсач.Core.Services.Interfaces;
 
 namespace Курсач
@@ -138,7 +139,7 @@ namespace Курсач
                     .FirstOrDefault(x => x is StackLayout && ((StackLayout)x).Children.OfType<Editor>().Any()) as StackLayout;
             var foundEditor = foundStackLayout.Children
                     .FirstOrDefault(x => x is Editor && ((Editor)x).AutomationId == "BookName") as Editor;
-
+            Book book = new Book();
             if (BookId == 0)
             {
                 var userBook = new UserBookData()
@@ -146,19 +147,33 @@ namespace Курсач
                     UserId = (await UserService.GetUser()).Id,
                     NameBook = foundEditor.Text
                 };
-                var book = await BookService.CreateBook(userBook);
-                return book.Id;
+                try
+                {
+                    book = await BookService.CreateBook(userBook);
+                    return book.Id;
+                }
+                catch (Exception ex)
+                {
+                    var errorMessage = await ErrorsDeserialization.Deserialization(ex);
+                    await DisplayAlert("Ошибка", errorMessage, "OK");
+                }
             }
             else
             {
-                var book = new Book()
+                book.Id = BookId;
+                book.NameBook = foundEditor.Text;
+
+                try
                 {
-                    Id = BookId,
-                    NameBook = foundEditor.Text
-                };
-                await BookService.UpdateBook(BookId, book);
-                return book.Id;
+                    await BookService.UpdateBook(BookId, book);
+                }
+                catch (Exception ex)
+                {
+                    var errorMessage = await ErrorsDeserialization.Deserialization(ex);
+                    await DisplayAlert("Ошибка", errorMessage, "OK");
+                }
             }
+            return book.Id;
         }
 
         private async void Button1_Clicked(object sender, EventArgs e)

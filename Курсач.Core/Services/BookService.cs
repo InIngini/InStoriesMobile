@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Serialization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,6 +26,7 @@ namespace Курсач.Core.Services
         public async Task<Book> CreateBook(UserBookData bookData)
         {
             var book = new Book();
+
             try
             {
                 var response = await HttpClient.PostAsJsonAsync("user/book", bookData);
@@ -34,16 +36,14 @@ namespace Курсач.Core.Services
                     throw new Exception("Ошибка создания книги") { Data = { { "Content", errorContent } } };
                 }
                 book = await response.Content.ReadFromJsonAsync<Book>();
+
+                await DatabaseManager.AddBookAsync(book);
             }
             catch
             {
-                book.Id = (await DatabaseManager.GetAllBooksAsync()).LastOrDefault().Id + 1;
-                book.NameBook = bookData.NameBook;
+                throw new Exception("Вы не можете добавить книгу. Возможно, у вас отсутствует подключение к интернету");
             }
-            finally
-            {
-                await DatabaseManager.AddBookAsync(book);
-            }
+
             return book;
         }
 
@@ -77,10 +77,11 @@ namespace Курсач.Core.Services
                     var errorContent = await response.Content.ReadAsStringAsync();
                     throw new Exception("Ошибка обновления книги") { Data = { { "Content", errorContent } } };
                 }
-            }
-            finally
-            {
                 await DatabaseManager.UpdateBookAsync(book);
+            }
+            catch
+            {
+                throw new Exception("Вы не можете обновить книгу. Возможно, у вас отсутствует подключение к интернету");
             }
         }
 
@@ -94,10 +95,11 @@ namespace Курсач.Core.Services
                     var errorContent = await response.Content.ReadAsStringAsync();
                     throw new Exception("Ошибка удаления книги") { Data = { { "Content", errorContent } } };
                 }
-            }
-            finally
-            {
                 await DatabaseManager.DeleteBookAsync(id);
+            }
+            catch
+            {
+                throw new Exception("Вы не можете удалить книгу. Возможно, у вас отсутствует подключение к интернету");
             }
         }
 
