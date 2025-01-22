@@ -42,7 +42,7 @@
             </Grid>
 
             <!--2-->
-            <StackLayout Grid.Row="2" Padding="12,0" Spacing="20" Margin="11,-125">
+            <StackLayout Grid.Row="2" Padding="12,0" Spacing="20" Margin="11,-100">
                 <Button Text="Персонажи" BackgroundColor="#B280FE" TextColor="White" FontSize="25"
                         FontFamily="Istok Web Bold" FontAttributes="Bold" CornerRadius = "10" HeightRequest="66" 
                             Clicked="ButtonPersona_Clicked"/>

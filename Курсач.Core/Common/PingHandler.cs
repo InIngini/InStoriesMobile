@@ -35,7 +35,7 @@ namespace Курсач.Core.Common
                 try
                 {
                     var task = client.ConnectAsync(host, port);
-                    var result = await Task.WhenAny(task, Task.Delay(1000, cancellationToken)); // 2 секунды
+                    var result = await Task.WhenAny(task, Task.Delay(500, cancellationToken)); // 0,5 секунды
                     return result == task && client.Connected; // Проверяем, подключен ли клиент
                 }
                 catch (Exception ex)
