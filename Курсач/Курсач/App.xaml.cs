@@ -12,6 +12,7 @@ using System.IO;
 using System.Text;
 using Курсач.Core.Services.Interfaces;
 using Курсач.Core.Common;
+using Курсач.Core.Data;
 
 namespace Курсач
 {
@@ -53,7 +54,10 @@ namespace Курсач
 
             services.AddTransient<AuthorizationHandler>();
 
-            RegisterHttpClient<IUserService, UserService> (services);
+            services.AddScoped<IMapRepository, MapRepository>();
+            services.AddScoped<IWebMessageHandler, MarkerManager>();
+
+            RegisterHttpClient<IUserService, UserService>(services);
             RegisterHttpClient<IBookService, BookService>(services, true);
             RegisterHttpClient<ICharacterService, CharacterService>(services, true);
             RegisterHttpClient<IConnectionService, ConnectionService>(services, true);

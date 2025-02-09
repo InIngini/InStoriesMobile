@@ -30,6 +30,7 @@
             <!-- Основное содержимое с возможностью прокрутки -->
             <Grid x:Name="buttonsGrid" Grid.Row="1" Margin="0,10,0,0" VerticalOptions="Start" HeightRequest="1000">
                 <WebView x:Name="mapWebView" />
+                <Button Text="Удалить все маркеры" Clicked="OnDeleteAllMarkersClicked" VerticalOptions="End"/>
             </Grid>
 
             <!--1-->
