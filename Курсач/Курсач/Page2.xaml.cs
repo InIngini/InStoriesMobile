@@ -46,98 +46,14 @@ namespace Курсач
         {
             var book = await BookService.GetBook(BookId);
             var nameBook = book != null ? book.NameBook : "Новая книга";
-            //название книги
-            var nameLabel = new Label
-            {
-                Text = nameBook,
-                FontFamily = "Istok Web",
-                FontSize = 20,
-                TextColor = Color.White,
-                Margin = new Thickness(-5, 2, 0, 2),
-                VerticalOptions = LayoutOptions.CenterAndExpand
-            };
-            if (nameLabel.Text.Length > 12)
-            {
-                nameLabel.Text = nameLabel.Text.Substring(0, 12) + "...";
-            }
-
-            Bar.Children.Add(nameLabel, 1, 0);
-
-            //книжка и название
-
-            Label textLabel = new Label
-            {
-                Text = "Название",
-                FontSize = 20,
-                FontAttributes = FontAttributes.Bold,
-                FontFamily = "Istok Web Bold",
-                TextColor = Color.White,
-                Margin = new Thickness(2, 0, 0, 0)
-            };
-            Editor textEditor = new Editor
-            {
-                AutomationId = "BookName",
-                WidthRequest = 100,
-                HeightRequest = 100,
-                BackgroundColor = Color.Transparent,
-                Text = nameBook,
-                FontSize = 20,
-                FontFamily = "Istok Web",
-                TextColor = Color.White
-            };
-
-            StackLayout stackLayout = new StackLayout();
-            stackLayout.Children.Add(textLabel);
-            stackLayout.Children.Add(textEditor);
-
-            //book
-            // Создание прямоугольника под каждой кнопкой
-            var rectangle = new BoxView
-            {
-                BackgroundColor = Color.FromHex("#B280FE"),
-                HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Start,
-                HeightRequest = 157,
-                WidthRequest = 123,
-                CornerRadius = 4,
-                Margin = new Thickness(2, 0, 2, 0)
-
-            };
-            var button = new Button
-            {
-                ImageSource = "photo.png",
-                FontSize = 20,
-                FontFamily = "Istok Web",
-                TextColor = Color.White,
-                BackgroundColor = Color.FromHex("#161519"),
-                BorderColor = Color.FromHex("#B280FE"),
-                BorderWidth = 1,
-                CornerRadius = 4,
-                VerticalOptions = LayoutOptions.Center,
-                HorizontalOptions = LayoutOptions.Center,
-                HeightRequest = 157,
-                WidthRequest = 123,
-                TranslationY = -rectangle.HeightRequest-10, // Сдвигаем прямоугольник вверх, чтобы кнопка перекрывала его
-                TranslationX = 10
-
-            };
-            //button.Clicked += Button_Clicked;
-
-            var stackLayout2 = new StackLayout();
-            stackLayout2.Children.Add(rectangle);
-            stackLayout2.Children.Add(button);
-            
-
-            buttonsGrid.Children.Add(stackLayout2, 0, 0);
-            buttonsGrid.Children.Add(stackLayout, 1, 0);
-
+            // Обновление элементов управления
+            nameLabel.Text = nameBook.Length > 12 ? nameBook.Substring(0, 12) + "..." : nameBook;
+            textEditor.Text = nameBook; // Установка текста в редактор
         }
 
         private async Task<int> SaveBook()
         {
-            var foundStackLayout = buttonsGrid.Children
-                    .FirstOrDefault(x => x is StackLayout && ((StackLayout)x).Children.OfType<Editor>().Any()) as StackLayout;
-            var foundEditor = foundStackLayout.Children
+            var foundEditor = buttonsGrid.Children
                     .FirstOrDefault(x => x is Editor && ((Editor)x).AutomationId == "BookName") as Editor;
             Book book = new Book();
             if (BookId == 0)

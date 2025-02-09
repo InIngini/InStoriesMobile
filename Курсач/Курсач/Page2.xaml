@@ -20,10 +20,19 @@
                     <ColumnDefinition Width="5*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-
+                     
                 <ImageButton Source="galochka.png" BackgroundColor="Transparent" 
                     HeightRequest="30" WidthRequest="30" Grid.Column="0" HorizontalOptions="Center" VerticalOptions ="Center"  
                     Clicked="Button1_Clicked"/>
+
+                <!-- Метка для названия книги -->
+                <Label x:Name="nameLabel" 
+                   FontFamily="Istok Web" 
+                   FontSize="20" 
+                   TextColor="White" 
+                   Margin="-5,2,0,2" 
+                   VerticalOptions="Center"
+                   Grid.Column="1"/>
 
                 <ImageButton Source="ttt.png" BackgroundColor="Transparent" HorizontalOptions="Center" VerticalOptions ="Center"
                     Grid.Column="2"/>
@@ -35,10 +44,63 @@
             <Grid x:Name="buttonsGrid" Margin="0,36,0,0" Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <BoxView Grid.Column="1" BackgroundColor="White" HeightRequest="0.5" WidthRequest="200"
-                        Margin="0, 125, 0, 195" HorizontalOptions="Center"/>
+                         Margin="0, 125, 0, 195" HorizontalOptions="Center"/>
+
+                <!-- Метка для текста "Название" -->
+                <Label x:Name="textLabel" 
+                       Text="Название" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       FontFamily="Istok Web Bold" 
+                       TextColor="White" 
+                       Margin="2,0,0,0"
+                       Grid.Column="1"/>
+
+                <!-- Редактор текста для имени книги -->
+                <Editor x:Name="textEditor" 
+                        AutomationId="BookName" 
+                        WidthRequest="100" 
+                        HeightRequest="100" 
+                        BackgroundColor="Transparent" 
+                        FontSize="20" 
+                        FontFamily="Istok Web" 
+                        TextColor="White"
+                        VerticalOptions="Center" 
+                        TranslationY="-50"
+                        Grid.Column="1"/>
+
+                <!-- Прямоугольник под кнопкой -->
+                <BoxView x:Name="rectangle" 
+                         BackgroundColor="#B280FE" 
+                         HorizontalOptions="Center" 
+                         VerticalOptions="Start" 
+                         HeightRequest="157" 
+                         WidthRequest="123" 
+                         CornerRadius="4" 
+                         Margin="2,0,2,0" 
+                         Grid.Column="0"/>
+
+                <!-- Кнопка -->
+                <Button x:Name="button" 
+                        ImageSource="photo.png" 
+                        FontSize="20" 
+                        FontFamily="Istok Web" 
+                        TextColor="White" 
+                        BackgroundColor="#161519" 
+                        BorderColor="#B280FE" 
+                        BorderWidth="1" 
+                        CornerRadius="4" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="Center" 
+                        HeightRequest="157" 
+                        WidthRequest="123" 
+                        TranslationY="-75" 
+                        TranslationX="10"
+                        Grid.Column="0"/>
             </Grid>
 
             <!--2-->
