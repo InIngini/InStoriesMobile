@@ -211,39 +211,80 @@ namespace InStories
         }
         public View AddNode(int id, Point point, string name, string source)
         {
-            Grid grid = new Grid();
+            // Создаем основной контейнер
+            Grid grid = new Grid
+            {
+                RowDefinitions =
+        {
+            new RowDefinition { Height = GridLength.Auto }, // Аватар
+            new RowDefinition { Height = GridLength.Auto }, // Имя
+            new RowDefinition { Height = GridLength.Auto }, // Фамилия
+            new RowDefinition { Height = GridLength.Auto }  // Дата
+        },
+                WidthRequest = 100,
+                VerticalOptions = LayoutOptions.Start
+            };
 
-            Image imageEllipse = new Image();
-            imageEllipse.Source = "ellipse.png";
-            imageEllipse.WidthRequest = 80;
-            imageEllipse.HeightRequest = 80;
-            grid.Children.Add(imageEllipse, 0, 0);
+            // Аватар (центрирован)
+            Image image = new Image
+            {
+                Source = source,
+                WidthRequest = 80,
+                HeightRequest = 80,
+                Aspect = Aspect.AspectFill,
+                HorizontalOptions = LayoutOptions.Center
+            };
+            Grid.SetRow(image, 0);
+            grid.Children.Add(image);
 
-            Image image = new Image();
-            image.Source = source;
-            image.WidthRequest = 80;
-            image.HeightRequest = 80;
-            grid.Children.Add(image, 0, 0);
+            // Разделяем имя и фамилию
+            var nameParts = name.Split(new[] { ' ' }, 2);
+            string firstName = nameParts.Length > 0 ? nameParts[0] : "";
+            string lastName = nameParts.Length > 1 ? nameParts[1] : "";
 
-            Label label = new Label();
-            label.Text = name;
-            label.TextColor = Color.White;
-            label.FontFamily = "Istok Web";
-            label.FontSize = 14;
-            label.VerticalOptions = LayoutOptions.Center;
-            label.HorizontalOptions = LayoutOptions.Center;
+            // Имя (первая строка)
+            Label firstNameLabel = new Label
+            {
+                Text = firstName,
+                TextColor = Color.White,
+                FontFamily = "Istok Web",
+                FontSize = 14,
+                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+            Grid.SetRow(firstNameLabel, 1);
+            grid.Children.Add(firstNameLabel);
 
-            grid.Children.Add(label, 0, 1);
+            // Фамилия (вторая строка, если есть)
+            if (!string.IsNullOrEmpty(lastName))
+            {
+                Label lastNameLabel = new Label
+                {
+                    Text = lastName,
+                    TextColor = Color.White,
+                    FontFamily = "Istok Web",
+                    FontSize = 14,
+                    HorizontalOptions = LayoutOptions.Center,
+                    HorizontalTextAlignment = TextAlignment.Center
+                };
+                Grid.SetRow(lastNameLabel, 2);
+                grid.Children.Add(lastNameLabel);
+            }
+
+            // Дата рождения (третья строка)
+            Label dateLabel = new Label
+            {
+                Text = "ДД.ММ.ГГГГ", // Замените на реальные данные
+                TextColor = Color.White,
+                FontFamily = "Istok Web",
+                FontSize = 12,
+                HorizontalOptions = LayoutOptions.Center,
+                HorizontalTextAlignment = TextAlignment.Center
+            };
+            Grid.SetRow(dateLabel, 3);
+            grid.Children.Add(dateLabel);
 
             return grid;
-        }
-
-        private async void Button4_1_Clicked(object sender, EventArgs e)
-        {
-            Button button = (Button)sender;  // Получение объекта Button, который отправил событие
-            string buttonText = button.AutomationId;  // Получение текста кнопки
-
-            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId, buttonText, "Личность"));
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)

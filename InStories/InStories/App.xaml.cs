@@ -51,6 +51,7 @@ namespace InStories
             // Регистрация репозиториев
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<ICharacterRepository, CharacterRepository>();
             services.AddScoped<IDatabaseSyncService, DatabaseSyncService>();
 
             // Регистрация сервисов

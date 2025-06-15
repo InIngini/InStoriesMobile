@@ -36,9 +36,9 @@ namespace InStories
         private async void Button5_1_Clicked(object sender, EventArgs e)
         {
             Button button = (Button)sender;  // Получение объекта Button, который отправил событие
-            string buttonText = button.AutomationId;  // Получение текста кнопки
+            int characterId = Convert.ToInt32(button.AutomationId);  // Получение текста кнопки
 
-            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId, buttonText, "Личность"));
+            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId, characterId, "Личность"));
         }
 
         private async void ButtonHome_Clicked(object sender, EventArgs e)

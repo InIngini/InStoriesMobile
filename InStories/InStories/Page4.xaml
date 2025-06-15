@@ -47,7 +47,7 @@
 
             <ImageButton Source="ok.png" BackgroundColor="Transparent"
                 HeightRequest="70" WidthRequest="70" HorizontalOptions="End" VerticalOptions="End" 
-                Clicked="Button4_1_Clicked" Grid.Row="1" Margin="10,10,10,0"/>
+                Clicked="ButtonHome_Clicked" Grid.Row="1" Margin="10,10,10,0"/>
 
             <!--2-->
             <!-- Полоска меню внизу -->

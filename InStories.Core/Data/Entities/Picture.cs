@@ -1,4 +1,6 @@
-﻿namespace InStories.Core.Data.Entities
+﻿using SQLite;
+
+namespace InStories.Core.Data.Entities
 {
     /// <summary>
     /// Класс, представляющий изображение.
@@ -8,6 +10,7 @@
         /// <summary>
         /// Уникальный идентификатор изображения.
         /// </summary>
+        [PrimaryKey]
         public int Id { get; set; }
 
         /// <summary>

@@ -9,6 +9,13 @@ using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 using InStories.Core.DB.Interfaces;
 using InStories.Core.Services.Interfaces;
+using InStories.Core.Data.Entities;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using InStories.Core.Data.DTO;
+using InStories.Core.Errors;
+using InStories.Core.Services;
+using InStories.Core.Data.Guide;
 
 namespace InStories
 {
@@ -16,35 +23,81 @@ namespace InStories
     public partial class Page3_1 : ContentPage
     {
         private int BookId;
-        private string NamePerson;
+        private int CharacterId;
+        private string NameCharacter;
         private string Кнопка;
         private IServiceProvider ServiceProvider { get; set; }
         private IBookService BookService { get; set; }
-        public Page3_1(IServiceProvider serviceProvider, int id, string namePerson, string кнопка)
+        private ICharacterService CharacterService { get; set; }
+        public Page3_1(IServiceProvider serviceProvider, int bookId, int characterId, string кнопка)
         {
             ServiceProvider = serviceProvider;
             BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
+            CharacterService = ServiceProviderServiceExtensions.GetService<ICharacterService>(ServiceProvider);
 
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
 
-            BookId = id;
-            NamePerson = namePerson;
+            BookId = bookId;
+            CharacterId = characterId;
             Кнопка = кнопка;
         }
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+            await LoadQuestionAsync();
             await LoadDataAsync();
 
             if (Кнопка == "Биография")
                 ScrollToIndex(5);
         }
 
+        private async Task LoadQuestionAsync()
+        {
+            // Получаем вопросы с сервера
+            var questions = await CharacterService.GetQuestions();
+
+            if (questions is null || questions.Count() == 0)
+                throw new ArgumentNullException("У вас нет доступа к интернету...");
+
+            // Очищаем списки перед заполнением
+            textList1.Clear();
+            textList2.Clear();
+            textList3.Clear();
+            textList4.Clear();
+
+            textList1.Add("Имя");
+
+            // Группируем вопросы по блокам
+            foreach (var question in questions)
+            {
+                switch (question.Block)
+                {
+                    case "Личность":
+                        textList1.Add(question.QuestionText);
+                        break;
+                    case "Внешность":
+                        textList2.Add(question.QuestionText);
+                        break;
+                    case "Характер":
+                        textList3.Add(question.QuestionText);
+                        break;
+                    case "По истории":
+                        textList4.Add(question.QuestionText);
+                        break;
+                    default:
+                        // Можно добавить логирование для нераспознанных блоков
+                        Debug.WriteLine($"Неизвестный блок вопроса: {question.Block}");
+                        break;
+                }
+            }
+        }
+
         private async Task LoadDataAsync()
         {
             var nameBook = (await BookService.GetBook(BookId)).NameBook;
+
             //название книги
             var nameLabel = new Label
             {
@@ -63,51 +116,39 @@ namespace InStories
             Bar.Children.Add(nameLabel, 1, 0);
 
             if (Кнопка == "Личность")
-                Button_Clicked(button1, EventArgs.Empty);//по умолчанию открыта личность
-            else//Биография
             {
-                
-                Button_Clicked(button5, EventArgs.Empty);
+                Button_Clicked(button1, EventArgs.Empty);//по умолчанию открыта личность
             }
-
+            else
+            {
+                Button_Clicked(button5, EventArgs.Empty);//Биография
+            }
         }
 
-        List<string> textList1 = new List<string>
-        {
-            "Имя: ФИО, Прозвище",
-            "Возраст: Дата рождения, Знак зодиака",
-            "Гендер: Пол, Ориентация",
-            "Биологический вид"
-        };
-        List<string> textList2 = new List<string>
-        {
-            "Биометрика: Цвет глаз, Волосы, Рост, Телосложение",
-            "Физические особенности: Шрамы, Тату",
-            "Внешний вид: Любимая одежда, Необычные элементы или пристрастия в одежде, Прическа"
-        };
-        List<string> textList3 = new List<string>
-        {
-            "Тип личности: Интроверт или экстраверт?, Флегматичен или меланхоличен?",
-            "Самооценка",
-            "Привычки и принципы",
-            "Интересы: Что любит?, Что не любит?, Чего боится?, О чем мечтает?",
-            "Мировоззрение: Убеждения, Цели"
-        };
-        List<string> textList4 = new List<string>
-        {
-            "В чем заключается его проблема в начале истории?",
-            "К чему стремится на протяжении истории?",
-            "Как персонаж меняется на протяжении истории?",
-            "Как читатели должны реагировать на этого персонажа?",
-            "Почему персонаж должен быть им интересен?"
-        };
+        private List<string> textList1 = new List<string>(); // Личность
+        private List<string> textList2 = new List<string>(); // Внешность
+        private List<string> textList3 = new List<string>(); // Характер
+        private List<string> textList4 = new List<string>(); // По истории
+
+        private Entry _nameEntry; // Сохраняем ссылку на поле ввода имени
+        private Label _namePersonLabel; // Сохраняем ссылку на метку имени
+
         bool АватарОбновить = true;
         private async void ScrollToIndex(int index)
         {
             await characteristicScrollView.ScrollToAsync((index - 1) * 100, 0, true);
         }
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
+            if (CharacterId == 0)
+                await CreateCharacter();
+            else
+                await SaveCharacter();
+
+            var character = await CharacterService.GetCharacter(CharacterId);
+
+            NameCharacter = character.Name;
+
             if (АватарОбновить)
             {
                 buttonsGrid.Children.Clear();
@@ -122,9 +163,9 @@ namespace InStories
                     VerticalOptions = LayoutOptions.Center
                 };
 
-                Label namePersonLabel = new Label
+                _namePersonLabel = new Label
                 {
-                    Text = NamePerson, // Замените namePerson на фактическое значение
+                    Text = NameCharacter,
                     TextColor = Color.White,
                     FontFamily = "Istok Web Bold",
                     FontSize = 20,
@@ -134,8 +175,8 @@ namespace InStories
                 };
 
                 buttonsGrid.Children.Add(avatarImage, 0, 0);
-                buttonsGrid.Children.Add(namePersonLabel, 1, 0);
-                
+                buttonsGrid.Children.Add(_namePersonLabel, 1, 0);
+
                 АватарОбновить = false;
             }
 
@@ -149,87 +190,64 @@ namespace InStories
             button5.TextColor = Color.Black;
             button6.TextColor = Color.Black;
             clickedButton.TextColor = Color.White;
-            int indexButton = clickedButton.AutomationId[0]-'0';
+            int indexButton = clickedButton.AutomationId[0] - '0';
             ScrollToIndex(indexButton);
 
             buttonsGrid2.Children.Clear();
             ScrollView scrollView = new ScrollView();
 
             string buttonText = clickedButton.Text; // Получаем текст нажатой кнопки
-
+            
             switch (buttonText)
             {
                 case "Личность":
-
+                    var indexInAnswer = 0; // Для имени еще
                     StackLayout stackLayout = new StackLayout()
                     {
                         Margin = new Thickness(0, 14, 0, 0),
                     };
                     foreach (string text in textList1)
                     {
-                        string[] splitText = text.Split(':'); // Разделение строки по символу ":"
-                        //на будущее, запретить пользователям писать в свойствах символы
-                        // Первый блок с текстом
                         Label subtitleLabel1 = new Label//заголовок свойства
                         {
                             Margin = new Thickness(19, 0, 0, 0),
-                            Text = splitText[0],
+                            Text = text,
                             FontFamily = "Istok Web Bold",
                             FontSize = 20,
                             TextColor = Color.White,
                             FontAttributes = FontAttributes.Bold
                         };
                         stackLayout.Children.Add(subtitleLabel1);
-
-                        if (splitText.Length > 1)//если там не только заголовок
+   
+                        // Entry
+                        Entry entry1 = new Entry
                         {
-                            string[] values = splitText[1].Split(','); // Разделение строки по символу ","
+                            HeightRequest = 50,
+                            Margin = new Thickness(15, 0, 0, 0),
+                            Text = indexInAnswer == 0 ? character.Name : character.Answers[indexInAnswer-1],
+                            AutomationId = $"{indexInAnswer}",
+                            FontFamily = "Istok Web",
+                            FontSize = 20,
+                            TextColor = Color.White,
+                            BackgroundColor = Color.Transparent
+                        };
 
-                            foreach (string value in values)
-                            {
-                                Label descriptionLabel1 = new Label
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    Text = value,
-                                    FontFamily = "Istok Web",
-                                    TextColor = Color.White,
-                                    FontSize = 16
-                                };
-                                stackLayout.Children.Add(descriptionLabel1);
-
-                                // Entry
-                                Entry entry1 = new Entry
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    FontFamily = "Istok Web",
-                                    FontSize = 20,
-                                    TextColor = Color.White,
-                                    BackgroundColor = Color.Transparent
-                                };
-                                //надо заполнять ентри
-                                stackLayout.Children.Add(entry1);
-                            }
-                        }
-                        else
+                        // Если это поле с именем (первый элемент)
+                        if (indexInAnswer == 0)
                         {
-                            // Entry
-                            Entry entry1 = new Entry
-                            {
-                                Margin = new Thickness(15, 0, 0, 0),
-                                FontFamily = "Istok Web",
-                                FontSize = 20,
-                                TextColor = Color.White,
-                                BackgroundColor = Color.Transparent
-                            };
-                            stackLayout.Children.Add(entry1);
+                            _nameEntry = entry1;
+                            _nameEntry.TextChanged += OnNameEntryTextChanged;
                         }
+
+                        indexInAnswer++;
+                        stackLayout.Children.Add(entry1);
                     }
                     scrollView.Content = stackLayout;
 
                     break;
 
                 case "Внешность":
-
+                    var indexInAnswer2 = textList1.Count;
                     StackLayout stackLayout2 = new StackLayout()
                     {
                         Margin = new Thickness(0, 14, 0, 0),
@@ -275,13 +293,10 @@ namespace InStories
 
                     foreach (string text in textList2)
                     {
-                        string[] splitText = text.Split(':'); // Разделение строки по символу ":"
-                        //на будущее, запретить пользователям писать в свойствах символы
-                        // Первый блок с текстом
                         Label subtitleLabel2 = new Label//заголовок свойства
                         {
                             Margin = new Thickness(19, 0, 0, 0),
-                            Text = splitText[0],
+                            Text = text,
                             FontFamily = "Istok Web Bold",
                             FontSize = 20,
                             TextColor = Color.White,
@@ -289,68 +304,36 @@ namespace InStories
                         };
                         stackLayout2.Children.Add(subtitleLabel2);
 
-                        if (splitText.Length > 1)//если там не только заголовок
+                        Entry entry2 = new Entry
                         {
-                            string[] values = splitText[1].Split(','); // Разделение строки по символу ","
-
-                            foreach (string value in values)
-                            {
-                                Label descriptionLabel2 = new Label
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    Text = value,
-                                    FontFamily = "Istok Web",
-                                    TextColor = Color.White,
-                                    FontSize = 16
-                                };
-                                stackLayout2.Children.Add(descriptionLabel2);
-
-                                // Entry
-                                Entry entry2 = new Entry
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    FontFamily = "Istok Web",
-                                    FontSize = 20,
-                                    TextColor = Color.White,
-                                    BackgroundColor = Color.Transparent
-                                };
-                                //надо заполнять ентри
-                                stackLayout2.Children.Add(entry2);
-                            }
-                        }
-                        else
-                        {
-                            // Entry
-                            Entry entry2 = new Entry
-                            {
-                                Margin = new Thickness(15, 0, 0, 0),
-                                FontFamily = "Istok Web",
-                                FontSize = 20,
-                                TextColor = Color.White,
-                                BackgroundColor = Color.Transparent
-                            };
-                            stackLayout2.Children.Add(entry2);
-                        }
+                            HeightRequest = 50,
+                            Margin = new Thickness(15, 0, 0, 0),
+                            Text = character.Answers[indexInAnswer2-1],
+                            AutomationId = $"{indexInAnswer2}",
+                            FontFamily = "Istok Web",
+                            FontSize = 20,
+                            TextColor = Color.White,
+                            BackgroundColor = Color.Transparent
+                        };
+                        indexInAnswer2++;
+                        stackLayout2.Children.Add(entry2);
                     }
 
                     scrollView.Content = stackLayout2;
                     break;
 
                 case "Характер":
-
+                    var indexInAnswer3 = textList1.Count+textList2.Count;
                     StackLayout stackLayout3 = new StackLayout()
                     {
                         Margin = new Thickness(0, 14, 0, 0),
                     };
                     foreach (string text in textList3)
                     {
-                        string[] splitText = text.Split(':'); // Разделение строки по символу ":"
-                        //на будущее, запретить пользователям писать в свойствах символы
-                        // Первый блок с текстом
                         Label subtitleLabel3 = new Label//заголовок свойства
                         {
                             Margin = new Thickness(19, 0, 0, 0),
-                            Text = splitText[0],
+                            Text = text,
                             FontFamily = "Istok Web Bold",
                             FontSize = 20,
                             TextColor = Color.White,
@@ -358,54 +341,25 @@ namespace InStories
                         };
                         stackLayout3.Children.Add(subtitleLabel3);
 
-                        if (splitText.Length > 1)//если там не только заголовок
+                        // Entry
+                        Entry entry3 = new Entry
                         {
-                            string[] values = splitText[1].Split(','); // Разделение строки по символу ","
-
-                            foreach (string value in values)
-                            {
-                                Label descriptionLabel3 = new Label
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    Text = value,
-                                    FontFamily = "Istok Web",
-                                    TextColor = Color.White,
-                                    FontSize = 16
-                                };
-                                stackLayout3.Children.Add(descriptionLabel3);
-
-                                // Entry
-                                Entry entry3 = new Entry
-                                {
-                                    Margin = new Thickness(15, 0, 0, 0),
-                                    FontFamily = "Istok Web",
-                                    FontSize = 20,
-                                    TextColor = Color.White,
-                                    BackgroundColor = Color.Transparent
-                                };
-                                //надо заполнять ентри
-                                stackLayout3.Children.Add(entry3);
-                            }
-                        }
-                        else
-                        {
-                            // Entry
-                            Entry entry3 = new Entry
-                            {
-                                Margin = new Thickness(15, 0, 0, 0),
-                                FontFamily = "Istok Web",
-                                FontSize = 20,
-                                TextColor = Color.White,
-                                BackgroundColor = Color.Transparent
-                            };
-                            stackLayout3.Children.Add(entry3);
-                        }
+                            HeightRequest = 50,
+                            Margin = new Thickness(15, 0, 0, 0),
+                            Text = character.Answers[indexInAnswer3-1],
+                            AutomationId = $"{indexInAnswer3}",
+                            FontFamily = "Istok Web",
+                            FontSize = 20,
+                            TextColor = Color.White,
+                            BackgroundColor = Color.Transparent
+                        };
+                        stackLayout3.Children.Add(entry3);
                     }
                     scrollView.Content = stackLayout3;
                     break;
 
                 case "По истории":
-
+                    var indexInAnswer4 = textList1.Count + textList2.Count + textList3.Count;
                     StackLayout stackLayout4 = new StackLayout()
                     {
                         Margin = new Thickness(0, 14, 0, 0),
@@ -428,6 +382,8 @@ namespace InStories
                         Editor editor4 = new Editor
                         {
                             Margin = new Thickness(15, 0, 0, 0),
+                            Text = character.Answers[indexInAnswer4-1],
+                            AutomationId = $"{indexInAnswer4}",
                             FontFamily = "Istok Web",
                             FontSize = 20,
                             TextColor = Color.White,
@@ -435,11 +391,13 @@ namespace InStories
                             WidthRequest = 360,
                             HeightRequest = 100
                         };
+                        indexInAnswer4++;
                         stackLayout4.Children.Add(editor4);
 
                     }
                     scrollView.Content = stackLayout4;
                     break;
+
                 case "Биография":
                     Grid gridBio = new Grid();
                     int i = 0;
@@ -466,7 +424,7 @@ namespace InStories
                             BackgroundColor = Color.FromHex("#B280FE"),
                             CornerRadius = 12,
                             HeightRequest = 45,
-                            
+
                         };
                         StackLayout buttonContent = new StackLayout
                         {
@@ -509,6 +467,7 @@ namespace InStories
                     }
                     scrollView.Content = gridBio;
                     break;
+
                 case "Галерея":
                     string[] фотки = new string[]
                     {
@@ -521,7 +480,7 @@ namespace InStories
                         "фото3",
                         "фотоо4",
                     };
-                    
+
                     Grid gridGalery = new Grid();
 
                     for (int j = 0; j < фотки.Length; j++)
@@ -573,7 +532,7 @@ namespace InStories
             внешность = new Grid();
             внешность.RowDefinitions.Add(new RowDefinition { Height = new GridLength(46) });
             внешность.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            
+
             // Создание ScrollView с горизонтальной ориентацией
             ScrollView scrollView = new ScrollView
             {
@@ -816,24 +775,149 @@ namespace InStories
             Button button = (Button)sender;
             string text = button.AutomationId;
 
-            await Navigation.PushAsync(new Page3_2(ServiceProvider, BookId, text, NamePerson));
+            await Navigation.PushAsync(new Page3_2(ServiceProvider, BookId, text, CharacterId));
 
         }
 
+        private async Task CreateCharacter()
+        {
+            try
+            {
+                if (CharacterId == 0)
+                {
+                    // Создание нового персонажа
+                    var newCharacter = new Character
+                    {
+                        BookId = BookId,
+                        Name = NameCharacter ?? "Новый персонаж",
+                        PictureId = GetCurrentPictureId() // Ваш метод для получения PictureId
+                    };
+
+                    var createdCharacter = await CharacterService.CreateCharacter(newCharacter);
+                    CharacterId = createdCharacter.Id;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                await DisplayAlert("Ошибка", $"Не удалось создать персонажа: {ex.Message}", "OK");
+                throw new Exception($"Ошибка сохранения: {ex}");
+            }
+        }
+        private async Task SaveCharacter()
+        {
+            try
+            {
+                // 1. Собираем данные из интерфейса
+                var answers = CollectAnswersFromUI();
+
+                // 2. Подготавливаем данные для сохранения
+                if (CharacterId == 0)
+                {
+                    await CreateCharacter();
+
+                    // Сразу обновляем ответы для нового персонажа
+                    await UpdateCharacterAnswers(answers);
+                }
+                else
+                {
+                    // Обновление существующего персонажа
+                    await UpdateCharacterAnswers(answers);
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                await DisplayAlert("Ошибка", $"Не удалось сохранить персонажа: {ex.Message}", "OK");
+                throw new Exception($"Ошибка сохранения: {ex}");
+            }
+        }
+
+        private List<string> CollectAnswersFromUI()
+        {
+            var answers = new List<string>();
+
+            if (buttonsGrid2.Children.FirstOrDefault() is ScrollView scrollView)
+            {
+                switch (scrollView.Content)
+                {
+                    case StackLayout stackLayout:
+                        foreach (var view in stackLayout.Children)
+                        {
+                            switch (view)
+                            {
+                                case Entry entry:
+                                    if (Convert.ToInt32(entry.AutomationId) != 0) // Пропускаем имя, нулевое
+                                        answers.Add(entry.Text ?? string.Empty);
+                                    break;
+                                case Editor editor:
+                                    if (Convert.ToInt32(editor.AutomationId) != 0)
+                                        answers.Add(editor.Text ?? string.Empty);
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case Grid grid:
+                        // Обработка Grid (если нужно)
+                        break;
+                }
+            }
+
+            return answers;
+        }
+
+        private async Task UpdateCharacterAnswers(List<string> answers)
+        {
+            var updateData = new CharacterWithAnswers
+            {
+                Name = NameCharacter ?? "Новый персонаж",
+                Answers = answers.ToArray(),
+                PictureId = GetCurrentPictureId() // Ваш метод для получения PictureId
+            };
+
+            await CharacterService.UpdateCharacter(updateData, CharacterId);
+        }
+
+        // Новый обработчик изменений в поле имени
+        private void OnNameEntryTextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_namePersonLabel != null && sender is Entry entry)
+            {
+                NameCharacter = entry.Text;
+                _namePersonLabel.Text = entry.Text;
+
+                // Если текст слишком длинный, обрезаем его
+                if (entry.Text.Length > 13)
+                {
+                    _namePersonLabel.Text = entry.Text.Substring(0, 13) + "...";
+                }
+            }
+        }
+
+        private int? GetCurrentPictureId()
+        {
+            // Реализуйте логику получения текущего PictureId
+            return null; // Заглушка
+        }
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {
+            await SaveCharacter();
             await Navigation.PushAsync(new Page2(ServiceProvider, BookId));
         }
         private async void ButtonPersona_Clicked(object sender, EventArgs e)
         {
+            await SaveCharacter();
             await Navigation.PushAsync(new Page3(ServiceProvider, BookId));
         }
         private async void ButtonShema_Clicked(object sender, EventArgs e)
         {
+            await SaveCharacter();
             await Navigation.PushAsync(new Page4(ServiceProvider, BookId));
         }
         private async void ButtonTime_Clicked(object sender, EventArgs e)
         {
+            await SaveCharacter();
             await Navigation.PushAsync(new Page5(ServiceProvider, BookId));
         }
     }

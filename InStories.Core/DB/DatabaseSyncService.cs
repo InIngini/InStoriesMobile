@@ -17,16 +17,21 @@ namespace InStories.Core.DB
     {
         private readonly IBookService BookService;
         private readonly IBookRepository BookRepository;
+        private readonly ICharacterService CharacterService;
+        private readonly ICharacterRepository CharacterRepository;
 
-        public DatabaseSyncService(IBookService bookService, IBookRepository bookRepository)
+        public DatabaseSyncService(IBookService bookService, IBookRepository bookRepository, ICharacterRepository characterRepository, ICharacterService characterService)
         {
             BookService = bookService;
             BookRepository = bookRepository;
+            CharacterRepository = characterRepository;
+            CharacterService = characterService;
         }
 
         public async Task SyncDatabasesAsync(int userId)
         {
             await SyncBooksAsync(userId);
+            await SyncQuestionsAsync();
         }
 
         private async Task SyncBooksAsync(int userId)
@@ -64,6 +69,15 @@ namespace InStories.Core.DB
                         await BookRepository.AddBookAsync(remoteBook);
                     }
                 }
+            }
+        }
+        
+        private async Task SyncQuestionsAsync()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                var inServer = await CharacterService.GetQuestions();
+                await CharacterRepository.SaveAllQuestionsAsync(inServer);
             }
         }
     }

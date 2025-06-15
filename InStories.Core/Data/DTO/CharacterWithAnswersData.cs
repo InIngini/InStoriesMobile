@@ -15,8 +15,9 @@
         /// </summary>
         public string Name { get; set; }
 
-        // Ответы по личности
-        /// <summary> Ответ 1 по личным качествам. </summary>
+        /// <summary>
+        /// Ответы
+        /// </summary>
         public string[] Answers { get; set; }
 
     }

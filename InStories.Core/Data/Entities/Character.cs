@@ -1,4 +1,6 @@
-﻿namespace InStories.Core.Data.Entities
+﻿using SQLite;
+
+namespace InStories.Core.Data.Entities
 {
     /// <summary>
     /// Класс, представляющий персонажа книги.
@@ -8,6 +10,7 @@
         /// <summary>
         /// Уникальный идентификатор персонажа.
         /// </summary>
+        [PrimaryKey]
         public int Id { get; set; }
 
         /// <summary>
@@ -23,6 +26,7 @@
         /// <summary>
         /// Связанная книга, к которой принадлежит персонаж.
         /// </summary>
+        [Ignore]
         public Book Book { get; set; }
 
         /// <summary>
@@ -33,6 +37,7 @@
         /// <summary>
         /// Связанное изображение персонажа.
         /// </summary>
+        [Ignore]
         public Picture Picture { get; set; }
     }
 }

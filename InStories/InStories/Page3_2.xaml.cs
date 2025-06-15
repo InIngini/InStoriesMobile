@@ -19,11 +19,12 @@ namespace InStories
     public partial class Page3_2 : ContentPage
     {
         private int BookId;
-        private string NamePerson;
+        private int CharacterId;
+        private string NameCharacter;
         private string Запись; 
         private IServiceProvider ServiceProvider { get; set; }
         private IBookService BookService { get; set; }
-        public Page3_2(IServiceProvider serviceProvider, int id, string запись, string person)
+        public Page3_2(IServiceProvider serviceProvider, int id, string запись, int characterId)
         {
             ServiceProvider = serviceProvider;
             BookService = ServiceProviderServiceExtensions.GetService<IBookService>(ServiceProvider);
@@ -32,7 +33,7 @@ namespace InStories
             NavigationPage.SetHasNavigationBar(this, false);
 
             BookId = id;
-            NamePerson = person;
+            CharacterId = characterId;
             Запись = запись;
 
         }
@@ -227,7 +228,7 @@ namespace InStories
         }
         private async void Button3_1_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId,NamePerson,"Биография"));
+            await Navigation.PushAsync(new Page3_1(ServiceProvider, BookId, CharacterId, "Биография"));
         }
         private async void ButtonHome_Clicked(object sender, EventArgs e)
         {

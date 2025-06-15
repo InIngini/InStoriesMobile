@@ -1,17 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using InStories.Core.Data.Entities;
-using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using InStories.Core.Data.Entities;
 using InStories.Core.DB.Interfaces;
-using Newtonsoft.Json.Linq;
-using System.IO;
-using Xamarin.Forms;
 using SQLite;
-using Xamarin.Forms.Shapes;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Path = System.IO.Path;
 
