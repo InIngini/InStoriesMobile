@@ -20,7 +20,7 @@
                     <ColumnDefinition Width="5*" />
                     <ColumnDefinition Width="1*" />
                 </Grid.ColumnDefinitions>
-
+                     
                 <ImageButton Source="galochka.png" BackgroundColor="Transparent" 
                     HeightRequest="30" WidthRequest="30" Grid.Column="0" HorizontalOptions="Center" VerticalOptions ="Center"  
                     Clicked="Button1_Clicked"/>
